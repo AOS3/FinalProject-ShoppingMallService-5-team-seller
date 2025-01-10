@@ -1,4 +1,4 @@
-package com.lion.judamie_seller
+package com.lion.judamie_seller.activity
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
