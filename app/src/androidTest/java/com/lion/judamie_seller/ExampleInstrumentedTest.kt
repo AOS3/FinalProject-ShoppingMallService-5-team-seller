@@ -1,4 +1,4 @@
-package com.lion.shoppingmallservice_5_team_seller
+package com.lion.judamie_seller
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

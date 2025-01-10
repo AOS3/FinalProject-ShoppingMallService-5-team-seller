@@ -1,10 +1,11 @@
-package com.lion.shoppingmallservice_5_team_seller
+package com.lion.judamie_seller
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.lion.shoppingmallservice_5_team_seller.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
