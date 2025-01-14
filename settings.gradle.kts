@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ShoppingMallService-5-team-seller"
+rootProject.name = "judamie_seller"
 include(":app")
  
