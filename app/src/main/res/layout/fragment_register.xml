@@ -82,6 +82,7 @@
                         android:layout_height="wrap_content"
                         android:singleLine="true"
                         android:maxLength="15"
+                        android:inputType="textPassword"
                         android:textAppearance="@style/TextAppearance.AppCompat.Large"
                         android:text="@={registerViewModel.textFieldUserRegisterPWEditTextText}" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -106,6 +107,7 @@
                         android:layout_height="wrap_content"
                         android:singleLine="true"
                         android:maxLength="15"
+                        android:inputType="textPassword"
                         android:textAppearance="@style/TextAppearance.AppCompat.Large"
                         android:text="@={registerViewModel.textFieldUserRegisterPW2EditTextText}" />
                 </com.google.android.material.textfield.TextInputLayout>

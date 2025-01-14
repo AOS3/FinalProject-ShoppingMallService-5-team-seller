@@ -2,15 +2,16 @@ package com.lion.judamie_seller.viewmodel
 
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.lion.judamie_seller.fragment.RegisterFragment
 
 class RegisterViewModel(val registerFragment: RegisterFragment) : ViewModel() {
-    // toolbarUserJoinStep1 - title
+    // toolbarRegister - title
     val toolbarUserLoginTitle = MutableLiveData<String>()
-    // toolbarUserJoinStep1 - navigationIcon
+    // toolbarRegister - navigationIcon
     val toolbarUserLoginNavigationIcon = MutableLiveData<Int>()
     // textFieldUserRegisterIDEditTextText - EditText - text
     val textFieldUserRegisterIDEditTextText = MutableLiveData("")
@@ -21,22 +22,23 @@ class RegisterViewModel(val registerFragment: RegisterFragment) : ViewModel() {
     // textFieldUserRegisterStoreNameEditTextText - EditText - text
     val textFieldUserRegisterStoreNameEditTextText = MutableLiveData("")
 
-    private val _isRegisterCompleteButtonEnabled = MutableLiveData(false)
-    val isRegisterCompleteButtonEnabled: LiveData<Boolean> = _isRegisterCompleteButtonEnabled
+    // 버튼 활성화 상태를 나타내는 LiveData
+    private val _isRegisterCompleteButtonEnabled = MediatorLiveData<Boolean>()
+    val isRegisterCompleteButtonEnabled: LiveData<Boolean> get() = _isRegisterCompleteButtonEnabled
 
-    fun buttonActive() {
-        // ID, PW 입력 검증
-        val IDNum = textFieldUserRegisterIDEditTextText.value
-        val PWNum1 =textFieldUserRegisterPWEditTextText.value
-        val PWNum2 =textFieldUserRegisterPW2EditTextText.value
-
-        // 휴대폰 번호 입력 검증
-        if (IDNum.isNullOrBlank() || PWNum1.isNullOrBlank() || PWNum2.isNullOrBlank()) {
-            _isRegisterCompleteButtonEnabled.value = false
-        } else {
-            _isRegisterCompleteButtonEnabled.value = true
-        }
+    init {
+        // 각 입력 필드의 변화를 감지하여 validateInputs 호출
+        _isRegisterCompleteButtonEnabled.addSource(textFieldUserRegisterIDEditTextText) { validateInputs() }
+        _isRegisterCompleteButtonEnabled.addSource(textFieldUserRegisterPWEditTextText) { validateInputs() }
+        _isRegisterCompleteButtonEnabled.addSource(textFieldUserRegisterPW2EditTextText) { validateInputs() }
+        _isRegisterCompleteButtonEnabled.addSource(textFieldUserRegisterStoreNameEditTextText) { validateInputs() }
     }
+
+    private fun validateInputs() {
+        _isRegisterCompleteButtonEnabled.value =
+            !(textFieldUserRegisterIDEditTextText.value.isNullOrBlank() || textFieldUserRegisterPWEditTextText.value.isNullOrBlank() || textFieldUserRegisterPW2EditTextText.value.isNullOrBlank() || textFieldUserRegisterStoreNameEditTextText.value.isNullOrBlank())
+    }
+
     fun buttonUserVerificationOnClick(){
         registerFragment.moveToUserVerification()
     }

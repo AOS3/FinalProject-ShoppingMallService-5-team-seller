@@ -50,7 +50,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="휴대폰 번호"
-                    app:errorEnabled="true">
+                    app:errorEnabled="true"
+                    app:error="@{registerVerificationViewModel.phoneNumberError}">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editTextUserRegisterPhoneNumber"
@@ -58,6 +59,7 @@
                         android:layout_height="wrap_content"
                         android:singleLine="true"
                         android:maxLength="11"
+                        android:inputType="number"
                         android:textAppearance="@style/TextAppearance.AppCompat.Large"
                         android:text="@={registerVerificationViewModel.textFieldUserRegisterPhoneNumberEditTextText}" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -79,7 +81,8 @@
                     android:hint="인증번호"
                     app:endIconMode="clear_text"
                     android:layout_marginTop="16dp"
-                    app:errorEnabled="true">
+                    app:errorEnabled="true"
+                    app:error="@{registerVerificationViewModel.verificationNumberError}">>
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editTextUserVerificationNumber"
@@ -87,6 +90,7 @@
                         android:layout_height="wrap_content"
                         android:singleLine="true"
                         android:maxLength="6"
+                        android:inputType="number"
                         android:textAppearance="@style/TextAppearance.AppCompat.Large"
                         android:text="@={registerVerificationViewModel.textFieldUserRegisterVerificationNumberEditTextText}" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -99,6 +103,7 @@
                     android:layout_marginTop="10dp"
                     android:onClick="@{(view) -> registerVerificationViewModel.buttonUserVerificationConfirmOnClick()}"
                     android:text="인증 확인"
+                    android:enabled="@{registerVerificationViewModel.isVerificationConfirmButtonEnabled}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large" />
             </LinearLayout>
         </ScrollView>
