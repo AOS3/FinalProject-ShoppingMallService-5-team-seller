@@ -24,19 +24,16 @@ data class LoginViewModel(val loginFragment: LoginFragment) : ViewModel() {
     }
 
     // buttonUserLoginSubmit - onClick
-    fun buttonUserLoginSubmitOnClick(){
+    fun buttonUserLoginSubmitOnClick() {
         val IDNum = textFieldUserLoginIdEditTextText.value
-        val PWNum =textFieldUserLoginPwEditTextText.value
+        val PWNum = textFieldUserLoginPwEditTextText.value
 
-        // 휴대폰 번호 입력 검증
-        if (IDNum.isNullOrBlank() || PWNum.isNullOrBlank()) {
-            IDError.value = "아이디를 입력해주세요"
-            PWError.value = "비밀번호를 입력해주세요"
-        } else {
-            // 에러 메시지 제거
-            IDError.value = null
-            PWError.value = null
-            // 인증 요청 처리 로직
+        // 아이디와 비밀번호 입력 검증
+        IDError.value = if (IDNum.isNullOrBlank()) "아이디를 입력해주세요" else null
+        PWError.value = if (PWNum.isNullOrBlank()) "비밀번호를 입력해주세요" else null
+
+        // 모든 필드가 올바르게 입력되었을 경우
+        if (IDError.value == null && PWError.value == null) {
             loginFragment.proLogin()
         }
     }
