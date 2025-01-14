@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="registerViewModel"
+            type="com.lion.judamie_seller.viewmodel.RegisterViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".RegisterFragment">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbarUserRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:navigationIcon="@drawable/arrow_back_24px"
+            app:onNavigationClickUserRegister="@{registerViewModel.RegisterFragment}"
+            app:title="회원 가입"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ScrollView
+            android:id="@+id/scrollViewContent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintTop_toBottomOf="@id/toolbarUserRegister"
+            app:layout_constraintBottom_toTopOf="@id/buttonUserRegisterComplete"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textFieldUserRegisterID"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="아이디"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:maxLength="15"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:text="@={registerViewModel.textFieldUserRegisterIDEditTextText}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{registerViewModel.textFieldUserRegisterIDEditTextText.length() + `/15`}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:layout_marginTop="4dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textFieldUserRegisterPW"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="비밀번호"
+                    app:endIconMode="password_toggle"
+                    android:layout_marginTop="16dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:maxLength="15"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:text="@={registerViewModel.textFieldUserRegisterPWEditTextText}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{registerViewModel.textFieldUserRegisterPWEditTextText.length() + `/15`}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:layout_marginTop="4dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textFieldUserRegisterPW2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="비밀번호 확인"
+                    app:endIconMode="password_toggle"
+                    android:layout_marginTop="16dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:maxLength="15"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:text="@={registerViewModel.textFieldUserRegisterPW2EditTextText}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{registerViewModel.textFieldUserRegisterPW2EditTextText.length() + `/15`}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:layout_marginTop="4dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textFieldUserRegisterStoreName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="스토어 이름"
+                    app:endIconMode="clear_text"
+                    android:layout_marginTop="16dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:maxLength="15"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:text="@={registerViewModel.textFieldUserRegisterStoreNameEditTextText}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{registerViewModel.textFieldUserRegisterStoreNameEditTextText.length() + `/15`}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </ScrollView>
+
+        <Button
+            android:id="@+id/buttonUserRegisterComplete"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="다음 단계"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:enabled="@{registerViewModel.isRegisterCompleteButtonEnabled}"
+            android:onClick="@{(view) -> registerViewModel.buttonUserVerificationOnClick()}" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
