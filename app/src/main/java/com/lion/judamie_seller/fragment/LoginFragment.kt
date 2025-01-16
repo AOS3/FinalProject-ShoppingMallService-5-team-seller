@@ -1,5 +1,6 @@
 package com.lion.judamie_seller.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -7,10 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.lion.judamie_seller.R
+import com.lion.judamie_seller.SellerActivity
 import com.lion.judamie_seller.UserActivity
 import com.lion.judamie_seller.UserFragmentName
 import com.lion.judamie_seller.databinding.FragmentLoginBinding
+import com.lion.judamie_seller.service.UserService
 import com.lion.judamie_seller.viewmodel.LoginViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment() {
 
@@ -23,13 +30,9 @@ class LoginFragment : Fragment() {
         fragmentLoginBinding.lifecycleOwner = this@LoginFragment
 
         userActivity = activity as UserActivity
-        // 툴바 설정
-        settingToolbar()
 
-        // 리스너 설정
-        fragmentLoginBinding.buttonUserLoginSubmit.setOnClickListener {
-            // 로그인 처리 로직
-        }
+        // 툴바를 구성하는 메서드 호출
+        settingToolbar()
 
         return fragmentLoginBinding.root
     }
@@ -47,6 +50,25 @@ class LoginFragment : Fragment() {
     }
 
     fun proLogin() {
+        fragmentLoginBinding.apply {
+            // 사용자가 입력한 아이디와 비밀번호
+            val loginUserId = loginViewModel?.textFieldUserLoginIdEditTextText?.value!!
+            val loginUserPw = loginViewModel?.textFieldUserLoginPwEditTextText?.value!!
 
+            CoroutineScope(Dispatchers.Main).launch {
+                // 로그인한 사용자 정보를 가져온다.
+                val work2 = async(Dispatchers.IO) {
+                    UserService.selectUserDataByUserIdOne(loginUserId)
+                }
+                val loginUserModel = work2.await()
+
+                // BoardActivity를 실행하고 현재 Activity를 종료한다.
+                val boardIntent = Intent(userActivity, SellerActivity::class.java)
+                boardIntent.putExtra("user_document_id", loginUserModel.userDocumentId)
+                boardIntent.putExtra("user_nick_name", loginUserModel.userNickName)
+                startActivity(boardIntent)
+                userActivity.finish()
+            }
+        }
     }
 }

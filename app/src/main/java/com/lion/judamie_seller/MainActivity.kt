@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // UserActivity를 실행한다.
-        val userIntent = Intent(this@MainActivity, UserActivity::class.java)
+        val userIntent = Intent(this@MainActivity, SellerActivity::class.java)
         startActivity(userIntent)
         // MainActivity를 종료한다.
         finish()
