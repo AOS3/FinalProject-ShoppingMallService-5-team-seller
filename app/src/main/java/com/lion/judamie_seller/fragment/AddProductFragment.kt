@@ -76,7 +76,7 @@ class AddProductFragment() : Fragment() {
         }
 
         fragmentAddProductBinding.recyclerViewSubImages.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = subImagesAdapter
         }
 

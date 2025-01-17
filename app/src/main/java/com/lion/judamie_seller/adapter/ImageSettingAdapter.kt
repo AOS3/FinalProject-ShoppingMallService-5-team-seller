@@ -58,6 +58,17 @@ class ImageSettingAdapter(
             imageList.removeAt(position)
             notifyItemRemoved(position) // 삭제된 위치를 RecyclerView에 알림
             notifyItemRangeChanged(position, imageList.size)
+
+            // 이미지가 모두 삭제된 경우 기본 이미지 추가
+            if (imageList.isEmpty()) {
+                addImage(
+                    ImageData(
+                        imageUrl = "res/drawable/ic_image_placeholder.xml",
+                        isMainImage = false,
+                        isDefault = true
+                    )
+                )
+            }
         }
     }
 }
