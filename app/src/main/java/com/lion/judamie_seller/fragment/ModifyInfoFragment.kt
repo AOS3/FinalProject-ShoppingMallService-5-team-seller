@@ -9,9 +9,10 @@ import androidx.databinding.DataBindingUtil
 import com.lion.judamie_seller.R
 import com.lion.judamie_seller.SellerActivity
 import com.lion.judamie_seller.databinding.FragmentModifyInfoBinding
+import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.viewmodel.ModifyInfoViewModel
 
-class ModifyInfoFragment(val mainFragment: MainFragment) : Fragment() {
+class ModifyInfoFragment() : Fragment() {
 
     lateinit var fragmentModifyInfoBinding: FragmentModifyInfoBinding
     lateinit var sellerActivity: SellerActivity
@@ -35,6 +36,6 @@ class ModifyInfoFragment(val mainFragment: MainFragment) : Fragment() {
 
     // 이전 화면으로 돌아가는 메서드
     fun movePrevFragment(){
-        mainFragment.removeFragment(MainFragment.SubFragmentName.MODIFY_INFO_FRAGMENT)
+        sellerActivity.removeFragment(SellerFragmentType.SELLER_TYPE_INFO)
     }
 }

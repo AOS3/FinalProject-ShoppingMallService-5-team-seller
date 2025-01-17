@@ -33,16 +33,11 @@ class ProductManagementViewModel(val productManagementFragment: ProductManagemen
     companion object{
         // toolbarBoardRead - onNavigationClickBoardRead
         @JvmStatic
-        @BindingAdapter("onNavigationClickBoardRead")
-        fun onNavigationClickBoardRead(materialToolbar: MaterialToolbar, productManagementFragment: ProductManagementFragment){
+        @BindingAdapter("onNavigationClickProductManagement")
+        fun onNavigationClickProductManagement(materialToolbar: MaterialToolbar, productManagementFragment: ProductManagementFragment){
             materialToolbar.setNavigationOnClickListener {
                 productManagementFragment.movePrevFragment()
             }
         }
     }
-}
-
-@BindingAdapter("app:navigationOnClick")
-fun setNavigationOnClick(toolbar: Toolbar, listener: View.OnClickListener?) {
-    toolbar.setNavigationOnClickListener(listener)
 }

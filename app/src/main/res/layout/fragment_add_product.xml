@@ -1,0 +1,223 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="addProductViewModel"
+            type="com.lion.judamie_seller.viewmodel.AddProductViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        tools:context=".AddProductFragment">
+
+        <!-- MaterialToolbar (고정) -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:menu="@menu/menu_product"
+            app:navigationIcon="@drawable/arrow_back_24px"
+            app:onNavigationClickAddProduct="@{addProductViewModel.addProductFragment}"
+            app:title="상품관리"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- ScrollView로 나머지 묶기 -->
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- 상품명 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputProductName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="상품명"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextProductName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@={addProductViewModel.textFieldProductNameEditTextText}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 상품 카테고리 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/productCategory"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="카테고리 선택"
+                    app:endIconMode="dropdown_menu"
+                    app:layout_constraintTop_toBottomOf="@id/textInputProductName"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/autoCompleteCategory"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 상품 가격 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="상품 가격"
+                    app:endIconMode="clear_text"
+                    app:layout_constraintTop_toBottomOf="@id/productCategory"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:text="@={addProductViewModel.textFieldProductPriceEditTextText}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 상품 할인율 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputDiscount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="할인율"
+                    app:endIconMode="clear_text"
+                    app:layout_constraintTop_toBottomOf="@id/textInputPrice"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextDiscount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
+                        android:text="@={addProductViewModel.textFieldProductDiscountRateEditTextText}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 상품 재고 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputStock"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="상품 재고"
+                    app:endIconMode="clear_text"
+                    app:layout_constraintTop_toBottomOf="@id/textInputDiscount"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextStock"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:text="@={addProductViewModel.textFieldProductStockEditTextText}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 상품 설명 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="상품 설명"
+                    app:endIconMode="clear_text"
+                    app:layout_constraintTop_toBottomOf="@id/textInputStock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:text="@={addProductViewModel.textFieldProductDetailEditTextText}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 대표 이미지 설정 -->
+                <TextView
+                    android:id="@+id/textViewMainImageTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="대표 이미지 설정"
+                    app:layout_constraintTop_toBottomOf="@id/textInputDescription"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="16dp" />
+
+                <!-- 대표 이미지 추가 버튼 -->
+                <Button
+                    android:id="@+id/buttonAddMainImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="대표 이미지 추가"
+                    app:layout_constraintTop_toBottomOf="@id/textViewMainImageTitle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="8dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewMainImages"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/buttonAddMainImage"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    tools:listitem="@layout/item_image_setting" />
+
+                <!-- 추가 이미지 설정 -->
+                <TextView
+                    android:id="@+id/textViewSubImageTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="추가 이미지 설정"
+                    app:layout_constraintTop_toBottomOf="@id/recyclerViewMainImages"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="16dp" />
+
+                <!-- 추가 이미지 추가 버튼 -->
+                <Button
+                    android:id="@+id/buttonAddAdditionalImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="추가 이미지 추가"
+                    app:layout_constraintTop_toBottomOf="@id/textViewSubImageTitle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="8dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewSubImages"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/buttonAddAdditionalImage"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    tools:listitem="@layout/item_additional_image_setting" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

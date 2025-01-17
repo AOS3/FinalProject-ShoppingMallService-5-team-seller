@@ -24,7 +24,7 @@
             android:theme="?attr/actionBarTheme"
             app:menu="@menu/menu_product_management"
             app:navigationIcon="@drawable/arrow_back_24px"
-            app:onNavigationClickBoardRead="@{productManagementViewModel.productManagementFragment}"
+            app:onNavigationClickProductManagement="@{productManagementViewModel.productManagementFragment}"
             app:title="상품관리"
             app:layout_constraintTop_toTopOf="parent" />
 

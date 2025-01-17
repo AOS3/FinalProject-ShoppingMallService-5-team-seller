@@ -9,13 +9,17 @@ import androidx.databinding.DataBindingUtil
 import com.lion.judamie_seller.R
 import com.lion.judamie_seller.SellerActivity
 import com.lion.judamie_seller.databinding.FragmentProductManagementBinding
+import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.viewmodel.ProductManagementViewModel
 
 
-class ProductManagementFragment(val mainFragment: MainFragment) : Fragment() {
+class ProductManagementFragment() : Fragment() {
 
     lateinit var fragmentProductManagementViewBinding: FragmentProductManagementBinding
     lateinit var sellerActivity: SellerActivity
+
+    // 현재 글의 문서 id를 담을 변수
+    lateinit var boardDocumentId:String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,16 +31,46 @@ class ProductManagementFragment(val mainFragment: MainFragment) : Fragment() {
 
         sellerActivity = activity as SellerActivity
 
+        gettingArguments()
+
+        settingToolbar()
+
         return fragmentProductManagementViewBinding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    fun settingToolbar(){
+        fragmentProductManagementViewBinding.apply {
+            toolbar.setOnMenuItemClickListener {
+                when(it.itemId){
+                    R.id.menuItemProductAdd -> {
+                        // 글의 문서 번호를 전달한다.
+                        val dataBundle = Bundle()
+                        dataBundle.putString("sellerDocumentId", boardDocumentId)
 
+                        // AddProductFragment로 이동
+                        sellerActivity.replaceFragment(
+                            SellerFragmentType.SELLER_TYPE_ADD_PRODUCT,
+                            isAddToBackStack = true,
+                            animate = true,
+                            dataBundle = dataBundle
+                        )
+                    }
+                }
+                true
+            }
+        }
+    }
+
+    fun gettingArguments(){
+        boardDocumentId = arguments?.getString("boardDocumentId")!!
+    }
+
+    fun moveToAddProduct() {
+        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_ADD_PRODUCT, true, true, null)
     }
 
     // 이전 화면으로 돌아가는 메서드
     fun movePrevFragment(){
-        mainFragment.removeFragment(MainFragment.SubFragmentName.PRODUCT_MANAGEMENT_FRAGMENT)
+        sellerActivity.removeFragment(SellerFragmentType.SELLER_TYPE_PRODUCT_MANAGEMENT)
     }
 }

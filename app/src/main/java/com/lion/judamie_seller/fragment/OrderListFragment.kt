@@ -9,9 +9,10 @@ import androidx.databinding.DataBindingUtil
 import com.lion.judamie_seller.R
 import com.lion.judamie_seller.SellerActivity
 import com.lion.judamie_seller.databinding.FragmentOrderListBinding
+import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.viewmodel.OrderListViewModel
 
-class OrderListFragment(val mainFragment: MainFragment) : Fragment() {
+class OrderListFragment() : Fragment() {
 
     lateinit var fragmentOrderListBinding: FragmentOrderListBinding
     lateinit var sellerActivity: SellerActivity
@@ -31,6 +32,6 @@ class OrderListFragment(val mainFragment: MainFragment) : Fragment() {
 
     // 이전 화면으로 돌아가는 메서드
     fun movePrevFragment(){
-        mainFragment.removeFragment(MainFragment.SubFragmentName.ORDER_LIST_FRAGMENT)
+        sellerActivity.removeFragment(SellerFragmentType.SELLER_TYPE_ORDER_LIST)
     }
 }
