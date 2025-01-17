@@ -37,30 +37,22 @@ class MainFragment : Fragment() {
 
     // 회원 가입 화면으로 이동시키는 메서드
     fun moveToProductManagement(){
-        val dataBundle = Bundle()
-        dataBundle.putString("boardDocumentId", SellerFragmentType.SELLER_TYPE_PRODUCT_MANAGEMENT.number.toString())
-        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_PRODUCT_MANAGEMENT, true, true, dataBundle)
+        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_PRODUCT_MANAGEMENT, true, true, null)
     }
 
     // 회원 가입 화면으로 이동시키는 메서드
     fun moveToOrderList(){
-        val dataBundle = Bundle()
-        dataBundle.putString("BoardType", SellerFragmentType.SELLER_TYPE_ORDER_LIST.number.toString())
-        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_ORDER_LIST, true, true, dataBundle)
+        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_ORDER_LIST, true, true, null)
     }
 
     // 회원 가입 화면으로 이동시키는 메서드
     fun moveToSalesList(){
-        val dataBundle = Bundle()
-        dataBundle.putString("BoardType", SellerFragmentType.SELLER_TYPE_SALES_LIST.number.toString())
-        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_SALES_LIST, true, true, dataBundle)
+        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_SALES_LIST, true, true, null)
     }
 
     // 회원 가입 화면으로 이동시키는 메서드
     fun moveToModifyInfo(){
-        val dataBundle = Bundle()
-        dataBundle.putString("BoardType", SellerFragmentType.SELLER_TYPE_INFO.number.toString())
-        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_INFO, true, true, dataBundle)
+        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_INFO, true, true, null)
     }
 
     // 프래그먼트를 BackStack에서 제거하는 메서드

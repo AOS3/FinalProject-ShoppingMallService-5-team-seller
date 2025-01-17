@@ -17,8 +17,6 @@ class ModifyInfoFragment() : Fragment() {
     lateinit var fragmentModifyInfoBinding: FragmentModifyInfoBinding
     lateinit var sellerActivity: SellerActivity
 
-    // 현재 글의 문서 id를 담을 변수
-    lateinit var boardDocumentId:String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

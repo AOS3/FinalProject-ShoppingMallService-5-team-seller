@@ -18,9 +18,6 @@ class ProductManagementFragment() : Fragment() {
     lateinit var fragmentProductManagementViewBinding: FragmentProductManagementBinding
     lateinit var sellerActivity: SellerActivity
 
-    // 현재 글의 문서 id를 담을 변수
-    lateinit var boardDocumentId:String
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -30,8 +27,6 @@ class ProductManagementFragment() : Fragment() {
         fragmentProductManagementViewBinding.lifecycleOwner = this@ProductManagementFragment
 
         sellerActivity = activity as SellerActivity
-
-        gettingArguments()
 
         settingToolbar()
 
@@ -43,26 +38,19 @@ class ProductManagementFragment() : Fragment() {
             toolbar.setOnMenuItemClickListener {
                 when(it.itemId){
                     R.id.menuItemProductAdd -> {
-                        // 글의 문서 번호를 전달한다.
-                        val dataBundle = Bundle()
-                        dataBundle.putString("sellerDocumentId", boardDocumentId)
 
                         // AddProductFragment로 이동
                         sellerActivity.replaceFragment(
                             SellerFragmentType.SELLER_TYPE_ADD_PRODUCT,
                             isAddToBackStack = true,
                             animate = true,
-                            dataBundle = dataBundle
+                            dataBundle = null
                         )
                     }
                 }
                 true
             }
         }
-    }
-
-    fun gettingArguments(){
-        boardDocumentId = arguments?.getString("boardDocumentId")!!
     }
 
     fun moveToAddProduct() {

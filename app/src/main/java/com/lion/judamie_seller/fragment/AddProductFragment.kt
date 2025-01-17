@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
@@ -48,6 +47,7 @@ class AddProductFragment() : Fragment() {
 
         sellerActivity = activity as SellerActivity
 
+        settingToolbar()
         // RecyclerView 초기화
         setupRecyclerViews()
 
@@ -139,6 +139,24 @@ class AddProductFragment() : Fragment() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    // 툴바를 구성하는 메서드
+    fun settingToolbar() {
+        fragmentAddProductBinding.apply {
+            toolbar.title = "상품추가"
+            toolbar.inflateMenu(R.menu.menu_product)
+            toolbar.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.menuItemProductDone-> {
+                        sellerActivity.replaceFragment(
+                            SellerFragmentType.SELLER_TYPE_PRODUCT_MANAGEMENT, true, true, null)
+                    }
+
+                }
+                true
             }
         }
     }
