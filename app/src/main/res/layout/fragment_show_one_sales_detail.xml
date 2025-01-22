@@ -1,0 +1,93 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="showOneSalesDetailViewModel"
+            type="com.lion.judamie_seller.viewmodel.ShowOneSalesDetailViewModel" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:transitionGroup="true">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbarMain6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleCentered="true"
+                app:navigationIcon="@drawable/arrow_back_24px"
+                app:title="주문 상세"
+                app:onNavigationClickShowOneSalesDetail="@{showOneSalesDetailViewModel.showOneSalesDetailFragment}"/>
+
+            <TextView
+                android:id="@+id/textViewCustomerText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:text='@{"구매자 : " + showOneSalesDetailViewModel.textViewCustomerText + "님"}'
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+            <TextView
+                android:id="@+id/textViewOrderDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:text='@{"주문날짜 : " + showOneSalesDetailViewModel.textViewOrderDateText}'
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+            <TextView
+                android:id="@+id/textViewProduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:text='@{"거래날짜 : " + showOneSalesDetailViewModel.textViewTransactionDateText}'
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+            <TextView
+                android:id="@+id/textViewPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:text='@{"거래품목 : " + showOneSalesDetailViewModel.textViewProductText}'
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+            <TextView
+                android:id="@+id/textViewQuantity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:text='@{"구매수량 : " + showOneSalesDetailViewModel.textViewQuantityText}'
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+            <TextView
+                android:id="@+id/textViewPickupLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:text='@{"단가 : " + showOneSalesDetailViewModel.textViewPriceText}'
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+            <TextView
+                android:id="@+id/textViewDelivery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:text='@{"총 매출 : " + showOneSalesDetailViewModel.textViewTotalPriceText}'
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        </LinearLayout>
+    </ScrollView>
+</layout>

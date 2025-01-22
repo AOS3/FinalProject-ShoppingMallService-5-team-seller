@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "483132913009",
+    "project_id": "shoppingmallservice-5-team",
+    "storage_bucket": "shoppingmallservice-5-team.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:483132913009:android:c749bd4736b65638aeb2d0",
+        "android_client_info": {
+          "package_name": "com.judamie_manager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAc28EgNOrFqX6JfhSkN7RHAPjMs7QnUeI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:483132913009:android:a8af10e08190edddaeb2d0",
+        "android_client_info": {
+          "package_name": "com.lion.judamie_seller"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAc28EgNOrFqX6JfhSkN7RHAPjMs7QnUeI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

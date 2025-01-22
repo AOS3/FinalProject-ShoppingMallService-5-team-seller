@@ -53,6 +53,4 @@ class RegisterFragment : Fragment() {
     fun movePrevFragment(){
         userActivity.removeFragment(UserFragmentName.USER_REGISTER_FRAGMENT)
     }
-
-
 }

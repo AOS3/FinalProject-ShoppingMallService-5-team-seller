@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="modifyInfoViewModel"
+            type="com.lion.judamie_seller.viewmodel.ModifyInfoViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        tools:context=".fragment.ModifyInfoFragment">
+
+        <!-- Toolbar Title -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:title="개인정보 관리"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:navigationIcon="@drawable/arrow_back_24px"
+            app:navigationContentDescription="뒤로가기"
+            app:onNavigationClickModifyInfo="@{modifyInfoViewModel.modifyInfoFragment}" />
+
+        <!-- 휴대폰 번호 입력 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textFieldPhoneNumber"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="휴대폰번호"
+            app:endIconMode="password_toggle"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextPhoneNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="11" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 인증 요청 버튼 -->
+        <Button
+            android:id="@+id/buttonRequestVerification"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="인증요청"
+            android:textColor="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/textFieldPhoneNumber"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 인증번호 입력 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textFieldVerificationCode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="인증번호"
+            app:layout_constraintTop_toBottomOf="@id/buttonRequestVerification"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextVerificationCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="6" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 인증 확인 버튼 -->
+        <Button
+            android:id="@+id/buttonConfirmVerification"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@android:color/darker_gray"
+            android:enabled="false"
+            android:text="인증 확인"
+            android:textColor="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/textFieldVerificationCode"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 새 비밀번호 입력 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textFieldNewPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:hint="새 비밀번호"
+            app:endIconMode="password_toggle"
+            app:layout_constraintTop_toBottomOf="@id/buttonConfirmVerification"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextNewPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 비밀번호 재입력 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textFieldReEnterPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="비밀번호 재입력"
+            app:endIconMode="password_toggle"
+            app:layout_constraintTop_toBottomOf="@id/textFieldNewPassword"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextReEnterPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 저장 버튼 -->
+        <Button
+            android:id="@+id/buttonSave"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:backgroundTint="@android:color/darker_gray"
+            android:enabled="false"
+            android:text="저장"
+            android:textColor="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/textFieldReEnterPassword"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
