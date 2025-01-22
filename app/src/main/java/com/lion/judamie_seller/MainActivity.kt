@@ -1,11 +1,11 @@
-package com.lion.judamie_seller.activity
+package com.lion.judamie_seller
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.lion.shoppingmallservice_5_team_seller.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,5 +17,11 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // UserActivity를 실행한다.
+        val userIntent = Intent(this@MainActivity, SellerActivity::class.java)
+        startActivity(userIntent)
+        // MainActivity를 종료한다.
+        finish()
     }
 }
