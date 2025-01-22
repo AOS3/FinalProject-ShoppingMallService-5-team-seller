@@ -35,12 +35,12 @@ class SellerRepository {
         // 글 목록을 가져오는 메서드
         suspend fun gettingProductList(productType: ProductType) : MutableList<Map<String, *>>{
             val firestore = FirebaseFirestore.getInstance()
-            val collectionReference = firestore.collection("ProductData")
+            val collectionReference = firestore.collection("productData")
             // 데이터를 가져온다.
             val result = if(productType == ProductType.PRODUCT_TYPE_ALL){
                 collectionReference.orderBy("productTimeStamp", Query.Direction.DESCENDING).get().await()
             } else {
-                collectionReference.whereEqualTo("productTypeValue", productType.number)
+                collectionReference.whereEqualTo("productCategory", productType.str)
                     .orderBy("productTimeStamp", Query.Direction.DESCENDING).get().await()
             }
             // 반환할 리스트
@@ -61,7 +61,7 @@ class SellerRepository {
         // 글정보를 수정하는 메서드
         suspend fun updateProductData(productVO: ProductVO, productDocumentId:String){
             val firestore = FirebaseFirestore.getInstance()
-            val collectionReference = firestore.collection("ProductData")
+            val collectionReference = firestore.collection("productData")
             val documentReference = collectionReference.document(productDocumentId)
 
             // 수정할 데이터를 맵에 담는다
@@ -87,9 +87,28 @@ class SellerRepository {
         // 서버에서 글을 삭제한다.
         suspend fun deleteProductData(productDocumentId:String){
             val firestore = FirebaseFirestore.getInstance()
-            val collectionReference = firestore.collection("ProductData")
+            val collectionReference = firestore.collection("productData")
             val documentReference = collectionReference.document(productDocumentId)
             documentReference.delete().await()
+        }
+
+        // 글의 문서 id를 통해 글 데이터를 가져온다.
+        suspend fun selectProductDataOneById(documentId:String) : ProductVO{
+            val firestore = FirebaseFirestore.getInstance()
+            val collectionReference = firestore.collection("productData")
+            val documentReference = collectionReference.document(documentId)
+            val documentSnapShot = documentReference.get().await()
+            val productVO = documentSnapShot.toObject(ProductVO::class.java)!!
+            return productVO
+        }
+
+        // 이미지 데이터를 가져온다.
+        suspend fun gettingImage(imageFileName:String) : Uri{
+            val storageReference = FirebaseStorage.getInstance().reference
+            // 파일명을 지정하여 이미지 데이터를 가져온다.
+            val childStorageReference = storageReference.child("image/$imageFileName")
+            val imageUri = childStorageReference.downloadUrl.await()
+            return imageUri
         }
     }
 }

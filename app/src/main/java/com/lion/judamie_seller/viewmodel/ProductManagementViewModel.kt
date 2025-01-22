@@ -31,7 +31,7 @@ class ProductManagementViewModel(val productManagementFragment: ProductManagemen
     }
 
     companion object{
-        // toolbarBoardRead - onNavigationClickBoardRead
+        // toolbarProductRead - onNavigationClickProductRead
         @JvmStatic
         @BindingAdapter("onNavigationClickProductManagement")
         fun onNavigationClickProductManagement(materialToolbar: MaterialToolbar, productManagementFragment: ProductManagementFragment){

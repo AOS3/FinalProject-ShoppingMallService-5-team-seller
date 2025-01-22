@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.lion.judamie_seller.fragment.ShowOneProductDetailFragment
-import com.lion.judamie_seller.fragment.ShowOneSalesDetailFragment
 
 class ShowOneProductDetailViewModel(val showOneProductDetailFragment: ShowOneProductDetailFragment) : ViewModel() {
     // textViewCustomer - text

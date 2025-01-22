@@ -33,8 +33,6 @@ class ProductCategoryFragment : Fragment() {
     var categoryName: String? = null
     lateinit var productType: ProductType
 
-    private val db = FirebaseFirestore.getInstance()
-
     var recyclerViewList = mutableListOf<ProductModel>()
 
     companion object {
@@ -63,11 +61,11 @@ class ProductCategoryFragment : Fragment() {
 
         categoryName = arguments?.getString(ARG_CATEGORY_NAME)
 
-        settingBoardType()
+        settingProductType()
 
         settingRecyclerView()
 
-        categoryName?.let { refreshCategoryRecyclerView() }
+        refreshCategoryRecyclerView()
 
         return fragmentCategoryBinding.root
     }
@@ -87,21 +85,22 @@ class ProductCategoryFragment : Fragment() {
         }
     }
 
-    // 데이터를 가져와 MainRecyclerView를 갱신하는 메서드
-    fun refreshCategoryRecyclerView(){
+    fun refreshCategoryRecyclerView() {
         CoroutineScope(Dispatchers.Main).launch {
-            val work1 = async(Dispatchers.IO){
+            val work1 = async(Dispatchers.IO) {
+                // 선택된 카테고리(`productType`)에 해당하는 데이터만 가져옴
                 SellerService.gettingProductList(productType)
             }
             recyclerViewList = work1.await()
 
+            // RecyclerView 업데이트
             fragmentCategoryBinding.recyclerviewCategoryList.adapter?.notifyDataSetChanged()
         }
     }
 
     // 게시판 타입 값을 담는 메서드
-    fun settingBoardType(){
-        val tempType = arguments?.getInt("BoardType")!!
+    fun settingProductType(){
+        val tempType = arguments?.getInt("ProductType")!!
         when(tempType){
             ProductType.PRODUCT_TYPE_ALL.number -> {
                 productType = ProductType.PRODUCT_TYPE_ALL
@@ -167,7 +166,7 @@ class ProductCategoryFragment : Fragment() {
             // 리사이클러뷰 항목 클릭 시 상세 화면으로 이동
             rowCategoryListBinding.root.setOnClickListener {
                 val dataBundle = Bundle()
-                dataBundle.putString("boardDocumentId", recyclerViewList[mainViewHolder.adapterPosition].productDocumentIdD)
+                dataBundle.putString("productDocumentId", recyclerViewList[mainViewHolder.adapterPosition].productDocumentId)
                 sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_DETAIL_PRODUCT, true, true, dataBundle)
             }
 

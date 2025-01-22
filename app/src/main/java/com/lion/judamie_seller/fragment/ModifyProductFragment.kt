@@ -6,20 +6,17 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import com.lion.judamie_seller.R
 import com.lion.judamie_seller.SellerActivity
 import com.lion.judamie_seller.adapter.ImageSettingAdapter
@@ -33,10 +30,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class ModifyProductFragment() : Fragment() {
 
@@ -74,7 +67,7 @@ class ModifyProductFragment() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // 데이터 바인딩 설정
-        fragmentModifyProductBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_product, container, false)
+        fragmentModifyProductBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_modify_product, container, false)
         fragmentModifyProductBinding.modifyProductViewModel = ModifyProductViewModel(this@ModifyProductFragment)
         fragmentModifyProductBinding.lifecycleOwner = this@ModifyProductFragment
 
@@ -310,7 +303,7 @@ class ModifyProductFragment() : Fragment() {
                     if (isRemoveBitmap) {
                         // 이미지 파일을 삭제한다.
                         val work1 = async(Dispatchers.IO) {
-                            SellerService.removeImageFile(productModel.productMainImage)
+                            SellerService.removeImageFile(productModel.productName)
                         }
                         work1.join()
                         productModel.productMainImage = "none"

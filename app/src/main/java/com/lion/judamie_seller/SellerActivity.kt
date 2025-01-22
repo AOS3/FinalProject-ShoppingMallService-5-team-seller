@@ -3,6 +3,7 @@ package com.lion.judamie_seller
 import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.View
@@ -15,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
+import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.transition.MaterialSharedAxis
 import com.lion.judamie_seller.databinding.ActivitySellerBinding
@@ -113,7 +115,7 @@ class SellerActivity : AppCompatActivity() {
                 newFragment?.returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ false)
             }
 
-            replace(R.id.fragmentContainerViewBoard, newFragment!!)
+            replace(R.id.fragmentContainerViewProduct, newFragment!!)
             if(isAddToBackStack){
                 addToBackStack(fragmentName.str)
             }
@@ -194,18 +196,17 @@ class SellerActivity : AppCompatActivity() {
         fileOutputStream.close()
     }
 
-    // 이미지 뷰에 있는 이미지를 파일로 저장한다.
-    fun saveImageView(imageView:ImageView){
-        // ImageView에서 이미지 데이터를 추출한다.
-        val bitmapDrawable = imageView.drawable as BitmapDrawable
-        val bitmap = bitmapDrawable.bitmap
+    // 서버에 있는 이미지를 가져와 ImageView에 보여준다.
+    fun showServiceMainImage(imageUri: Uri, imageView: ImageView){
+        Glide.with(this@SellerActivity).load(imageUri).into(imageView)
+    }
 
-        // 저장할 파일의 경로
-        val file = File("${filePath}/uploadTemp.jpg")
-        // 파일로 저장한다.
-        val fileOutputStream = FileOutputStream(file)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream)
-        fileOutputStream.flush()
-        fileOutputStream.close()
+    fun showServiceSubImages(imageUris: List<Uri>, imageView: ImageView) {
+        // 이미지 리스트를 순차적으로 Glide로 처리
+        for (uri in imageUris) {
+            Glide.with(this@SellerActivity)
+                .load(uri)
+                .into(imageView)
+        }
     }
 }

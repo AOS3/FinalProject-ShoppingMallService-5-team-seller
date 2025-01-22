@@ -161,7 +161,7 @@ class UserActivity : AppCompatActivity() {
 
     // 자동 로그인 처리 메서드
     // 자동 로그인에 실패하면 LoginFragment를 띄우고
-    // 자동 로그인에 성공하면 현재 Activity를 종료하고 BoardActivity를 실행킨다.
+    // 자동 로그인에 성공하면 현재 Activity를 종료하고 ProductActivity를 실행킨다.
     fun userAutoLoginProcessing(){
         // Preference에 login token이 있는지 확인한다.
         val pref = getSharedPreferences("LoginToken", Context.MODE_PRIVATE)
@@ -177,11 +177,11 @@ class UserActivity : AppCompatActivity() {
                 val loginUserModel = work1.await()
                 // 가져온 사용자 데이터가 있다면
                 if(loginUserModel != null){
-                    // BoardActivity를 실행하고 현재 Activity를 종료한다.
-                    val boardIntent = Intent(this@UserActivity, SellerActivity::class.java)
-                    boardIntent.putExtra("user_document_id", loginUserModel.userDocumentId)
-                    boardIntent.putExtra("user_nick_name", loginUserModel.userNickName)
-                    startActivity(boardIntent)
+                    // ProductActivity를 실행하고 현재 Activity를 종료한다.
+                    val productIntent = Intent(this@UserActivity, SellerActivity::class.java)
+                    productIntent.putExtra("user_document_id", loginUserModel.userDocumentId)
+                    productIntent.putExtra("user_nick_name", loginUserModel.userNickName)
+                    startActivity(productIntent)
                     finish()
                 } else {
                     // 첫번째 Fragment를 설정한다.

@@ -53,8 +53,6 @@ class AddProductFragment() : Fragment() {
     private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
     private var isMainImage = false
 
-    private val categories = ProductType.values()
-
     var categoryName: String? = null
 
 
@@ -296,25 +294,28 @@ class AddProductFragment() : Fragment() {
             CoroutineScope(Dispatchers.Main).launch {
                 // 이미지가 첨부되어 있다면
                 if(isSetImageView){
+                    val productModel = ProductModel()
                     // 서버상에서의 파일 이름
-                    productMainFileName = "main_image_${System.currentTimeMillis()}.jpg"
+                    productMainFileName = "main_image_$productName.jpg"
                     // 로컬에 ImageView에 있는 이미지 데이터를 저장한다.
                     mainImagesAdapter.getMainImageView(recyclerViewMainImages)
                         ?.let { sellerActivity.saveMainImageView(it) }
 
+                    if (productModel.productSubImage.isNotEmpty()) {
+                        val imageView = subImagesAdapter.getSubImageViews(recyclerViewSubImages)
+                        val subImageCount = subImagesAdapter.itemCount
+                        // 서브 이미지 파일 이름을 리스트로 관리
+                        for (index in 0 until subImageCount) {
+                            // 고유한 파일 이름 생성
+                            productSubFileName =
+                                "sub_image_${productModel.productName}_${index}.jpg"
 
-                    val imageView = subImagesAdapter.getSubImageViews(recyclerViewSubImages)
-                    val subImageCount = subImagesAdapter.itemCount
-                    // 서브 이미지 파일 이름을 리스트로 관리
-                    for (index in 0 until subImageCount) {
-                        // 고유한 파일 이름 생성
-                        productSubFileName = "sub_image_${System.currentTimeMillis()}_${index}.jpg"
+                            // 이미지 저장
+                            sellerActivity.saveSubImageViews(imageView)
 
-                        // 이미지 저장
-                        sellerActivity.saveSubImageViews(imageView)
-
-                        // 서브 이미지 파일 이름을 리스트에 추가
-                        productSubFileNames.add(productSubFileName)
+                            // 서브 이미지 파일 이름을 리스트에 추가
+                            productSubFileNames.add(productSubFileName)
+                        }
                     }
 
 
@@ -355,10 +356,9 @@ class AddProductFragment() : Fragment() {
                 // 글을 보는 화면으로 이동한다.
                 // 문서의 아이디를 전달한다.
                 val dataBundle = Bundle()
-                dataBundle.putString("boardDocumentId", documentId)
+                dataBundle.putString("productDocumentId", documentId)
                 sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_PRODUCT_MANAGEMENT, true, true, dataBundle)
             }
         }
     }
-
 }

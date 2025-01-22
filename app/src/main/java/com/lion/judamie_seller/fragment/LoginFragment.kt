@@ -62,11 +62,11 @@ class LoginFragment : Fragment() {
                 }
                 val loginUserModel = work2.await()
 
-                // BoardActivity를 실행하고 현재 Activity를 종료한다.
-                val boardIntent = Intent(userActivity, SellerActivity::class.java)
-                boardIntent.putExtra("user_document_id", loginUserModel.userDocumentId)
-                boardIntent.putExtra("user_nick_name", loginUserModel.userNickName)
-                startActivity(boardIntent)
+                // ProductActivity를 실행하고 현재 Activity를 종료한다.
+                val productIntent = Intent(userActivity, SellerActivity::class.java)
+                productIntent.putExtra("user_document_id", loginUserModel.userDocumentId)
+                productIntent.putExtra("user_nick_name", loginUserModel.userNickName)
+                startActivity(productIntent)
                 userActivity.finish()
             }
         }

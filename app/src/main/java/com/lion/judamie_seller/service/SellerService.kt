@@ -1,7 +1,9 @@
 package com.lion.judamie_seller.service
 
+import android.net.Uri
 import com.lion.judamie_seller.model.ProductModel
 import com.lion.judamie_seller.repository.SellerRepository
+import com.lion.judamie_seller.repository.SellerRepository.Companion.gettingImage
 import com.lion.judamie_seller.repository.UserRepository
 import com.lion.judamie_seller.util.ProductType
 import com.lion.judamie_seller.util.SellerFragmentType
@@ -54,6 +56,28 @@ class SellerService {
         // 서버에서 글을 삭제한다.
         suspend fun deleteProductData(productDocumentId:String){
             SellerRepository.deleteProductData(productDocumentId)
+        }
+
+        // 글의 문서 id를 통해 글 데이터를 가져온다.
+        suspend fun selectProductDataOneById(documentId:String) : ProductModel{
+            // 글 데이터를 가져온다.
+            val productVO = SellerRepository.selectProductDataOneById(documentId)
+            // productModel객체를 생성한다.
+            val productModel = productVO.toProductModel(documentId)
+
+            return productModel
+        }
+
+        // 이미지 데이터를 가져온다.
+        suspend fun gettingMainImage(imageFileName:String) : Uri {
+            val imageUri = SellerRepository.gettingImage(imageFileName)
+            return imageUri
+        }
+
+        suspend fun gettingSubImages(imageFileNames: List<String>): List<Uri> {
+            return imageFileNames.map { imageFileName ->
+                gettingImage(imageFileName) // 개별 이미지를 처리
+            }
         }
     }
 }

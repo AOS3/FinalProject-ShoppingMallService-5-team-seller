@@ -10,7 +10,7 @@ import com.lion.judamie_seller.fragment.SalesListFragment
 class SalesListViewModel(val salesListFragment: SalesListFragment) : ViewModel() {
 
     companion object{
-        // toolbarBoardRead - onNavigationClickBoardRead
+        // toolbarProductRead - onNavigationClickProductRead
         @JvmStatic
         @BindingAdapter("onNavigationClickSalesList")
         fun onNavigationClickSalesList(materialToolbar: MaterialToolbar, salesListFragment: SalesListFragment){

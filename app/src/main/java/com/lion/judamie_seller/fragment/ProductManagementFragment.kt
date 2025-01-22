@@ -13,9 +13,14 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.lion.judamie_seller.R
 import com.lion.judamie_seller.SellerActivity
 import com.lion.judamie_seller.databinding.FragmentProductManagementBinding
+import com.lion.judamie_seller.service.SellerService
 import com.lion.judamie_seller.util.ProductType
 import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.viewmodel.ProductManagementViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class ProductManagementFragment() : Fragment() {
 
@@ -90,7 +95,11 @@ class ProductManagementFragment() : Fragment() {
         // position번째에서 사용할 Fragment 객체를 생성해 반환하는 메서드
         override fun createFragment(position: Int): Fragment {
             // 카테고리 정보 전달
-            return ProductCategoryFragment.newInstance(categories[position].str)
+            return ProductCategoryFragment.newInstance(categories[position].str).apply {
+                arguments = Bundle().apply {
+                    putInt("ProductType", categories[position].number) // 전달할 ProductType 추가
+                }
+            }
         }
     }
 }
