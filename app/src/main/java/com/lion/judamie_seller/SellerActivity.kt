@@ -1,6 +1,13 @@
 package com.lion.judamie_seller
 
+import android.content.DialogInterface
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.os.SystemClock
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -8,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.transition.MaterialSharedAxis
 import com.lion.judamie_seller.databinding.ActivitySellerBinding
 import com.lion.judamie_seller.fragment.AddProductFragment
@@ -20,6 +28,10 @@ import com.lion.judamie_seller.fragment.SalesListFragment
 import com.lion.judamie_seller.fragment.ShowOneProductDetailFragment
 import com.lion.judamie_seller.fragment.ShowOneSalesDetailFragment
 import com.lion.judamie_seller.util.SellerFragmentType
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import kotlin.concurrent.thread
 
 
 class SellerActivity : AppCompatActivity() {
@@ -31,6 +43,9 @@ class SellerActivity : AppCompatActivity() {
     var newFragment: Fragment? = null
     var oldFragment: Fragment? = null
 
+    // 촬영된 사진이 위치할 경로
+    lateinit var filePath: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -40,7 +55,7 @@ class SellerActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
+        filePath = getExternalFilesDir(null).toString()
         // 첫 프래그먼트를 보여준다.
         replaceFragment(SellerFragmentType.SELLER_TYPE_MAIN, false, false, null)
     }
@@ -110,4 +125,87 @@ class SellerActivity : AppCompatActivity() {
         supportFragmentManager.popBackStack(fragmentName.str, FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
 
+    // 다이얼로그를 통해 메시지를 보여주는 함수
+    fun showMessageDialog(title:String, message:String, posTitle:String, callback:()-> Unit){
+        val builder = MaterialAlertDialogBuilder(this@SellerActivity)
+        builder.setTitle(title)
+        builder.setMessage(message)
+        builder.setPositiveButton(posTitle){ dialogInterface: DialogInterface, i: Int ->
+            callback()
+        }
+        builder.show()
+    }
+
+    // 키보드 올리는 메서드
+    fun showSoftInput(view: View){
+        // 입력을 관리하는 매니저
+        val inputManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        // 포커스를 준다.
+        view.requestFocus()
+
+        thread {
+            SystemClock.sleep(500)
+            // 키보드를 올린다.
+            inputManager.showSoftInput(view, 0)
+        }
+    }
+
+    fun saveMainImageView(imageView: ImageView?) {
+        saveImageView(imageView, "UploadMain")
+    }
+
+    fun saveSubImageViews(imageViews: List<ImageView>) {
+        // ImageView 리스트 전체를 순회
+        imageViews.forEachIndexed { index, imageView ->
+            // 이미지 데이터를 추출
+            val bitmapDrawable = imageView.drawable as? BitmapDrawable
+            val bitmap = bitmapDrawable?.bitmap
+
+            // 만약 비트맵이 null이라면 저장을 건너뛰기
+            if (bitmap != null) {
+                // 고유한 파일 이름 생성 (이미지 인덱스를 붙여서 저장)
+                val fileName = "UploadSub_$index.jpg"
+                val file = File("$filePath/$fileName")
+
+                // 파일로 저장
+                try {
+                    val fileOutputStream = FileOutputStream(file)
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream)
+                    fileOutputStream.flush()
+                    fileOutputStream.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    fun saveImageView(imageView: ImageView?, fileName: String){
+        // ImageView에서 이미지 데이터를 추출한다.
+        val bitmapDrawable = imageView?.drawable as BitmapDrawable
+        val bitmap = bitmapDrawable.bitmap
+
+        // 저장할 파일의 경로
+        val file = File("${filePath}/$fileName.jpg")
+        // 파일로 저장한다.
+        val fileOutputStream = FileOutputStream(file)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream)
+        fileOutputStream.flush()
+        fileOutputStream.close()
+    }
+
+    // 이미지 뷰에 있는 이미지를 파일로 저장한다.
+    fun saveImageView(imageView:ImageView){
+        // ImageView에서 이미지 데이터를 추출한다.
+        val bitmapDrawable = imageView.drawable as BitmapDrawable
+        val bitmap = bitmapDrawable.bitmap
+
+        // 저장할 파일의 경로
+        val file = File("${filePath}/uploadTemp.jpg")
+        // 파일로 저장한다.
+        val fileOutputStream = FileOutputStream(file)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream)
+        fileOutputStream.flush()
+        fileOutputStream.close()
+    }
 }

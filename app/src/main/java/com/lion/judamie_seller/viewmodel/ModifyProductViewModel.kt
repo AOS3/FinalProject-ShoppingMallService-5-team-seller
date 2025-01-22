@@ -17,7 +17,7 @@ class ModifyProductViewModel(val ModifyProductFragment: ModifyProductFragment) :
     val textFieldProductPriceEditTextText = MutableLiveData("")
     val textFieldProductDiscountRateEditTextText = MutableLiveData("")
     val textFieldProductStockEditTextText = MutableLiveData("")
-    val textFieldProductDetailEditTextText = MutableLiveData("")
+    val textFieldProductDescriptionEditTextText = MutableLiveData("")
 
     companion object {
         @JvmStatic
@@ -27,7 +27,7 @@ class ModifyProductViewModel(val ModifyProductFragment: ModifyProductFragment) :
             ModifyProductFragment: ModifyProductFragment
         ) {
             materialToolbar.setNavigationOnClickListener {
-                ModifyProductFragment.moveToDetailProductFragment()
+                ModifyProductFragment.moveToProductManagementFragment()
             }
         }
 
