@@ -34,18 +34,20 @@ class RegisterVerificationViewModel(val registerVerificationFragment: RegisterVe
 
     // 인증 요청 버튼 클릭 이벤트
     fun buttonUserVerificationRequestOnClick() {
-        val phoneNumber = textFieldUserRegisterPhoneNumberEditTextText.value
-
-        // 휴대폰 번호 입력 검증
-        if (phoneNumber.isNullOrBlank()) {
-            phoneNumberError.value = "휴대폰 번호를 입력해주세요" // 에러 메시지 설정
-        } else if (!phoneNumber.matches(Regex("^\\d{10,11}$"))) { // 숫자만 허용 (10~11자리)
-            phoneNumberError.value = "올바른 휴대폰 번호를 입력해주세요" // 에러 메시지 설정
-        } else {
-            // 에러 메시지 제거
-            phoneNumberError.value = null
-            // 인증 요청 처리 로직
-            registerVerificationFragment.proVerificationRequest()
+        registerVerificationFragment.apply {
+            // 입력요소 검사
+            if(textFieldUserRegisterPhoneNumberEditTextText.value?.isEmpty()!!){
+                userActivity.showMessageDialog("휴대폰 번호 입력", "휴대폰 번호를 입력해주세요", "확인"){
+                    userActivity.showSoftInput(fragmentRegisterVerificationBinding.textFieldUserPhoneNumber.editText!!)
+                }
+                return
+            }
+            if(textFieldUserRegisterVerificationNumberEditTextText.value?.isEmpty()!!){
+                userActivity.showMessageDialog("인증번호 입력", "인증번호를 입력해주세요", "확인"){
+                    userActivity.showSoftInput(fragmentRegisterVerificationBinding.textFieldUserVerificationNumber.editText!!)
+                }
+                return
+            }
         }
     }
 
@@ -67,9 +69,14 @@ class RegisterVerificationViewModel(val registerVerificationFragment: RegisterVe
     }
 
     fun buttonUserRegisterCompleteOnClick() {
-        if (_isRegisterCompleteButtonEnabled.value == true) {
-            registerVerificationFragment.proVerificationComplete()
-        }
+//            // 본인인증이 안됬다면
+//            if(!registerVerificationFragment.isCheckRegisterUserIdExist){
+//                userActivity.showMessageDialog("아이디 중복 확인", "아이디 중복 확인을 해주세요", "확인"){
+//
+//                }
+//                return
+//            }
+        registerVerificationFragment.proUserJoin()
     }
 
     companion object{

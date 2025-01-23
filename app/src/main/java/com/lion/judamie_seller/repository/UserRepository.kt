@@ -6,6 +6,22 @@ import kotlinx.coroutines.tasks.await
 
 class UserRepository {
     companion object {
+        // 사용자 정보를 추가하는 메서드
+        fun addUserData(userVO: UserVO){
+            val firestore = FirebaseFirestore.getInstance()
+            val collectionReference = firestore.collection("UserData")
+            collectionReference.add(userVO)
+        }
+
+        // 사용자 아이디를 통해 사용자 데이터를 가져오는 메서드
+        suspend fun selectUserDataByUserId(userId:String) : MutableList<UserVO>{
+            val firestore = FirebaseFirestore.getInstance()
+            val collectionReference = firestore.collection("SellerData")
+            val result = collectionReference.whereEqualTo("sellerId", userId).get().await()
+            val userVoList = result.toObjects(UserVO::class.java)
+            return userVoList
+        }
+
         // 사용자 아이디와 동일한 사용자의 정보 하나를 반환하는 메서드
         suspend fun selectUserDataByUserIdOne(userId:String) : MutableMap<String, *>{
             val firestore = FirebaseFirestore.getInstance()
@@ -37,6 +53,17 @@ class UserRepository {
                 )
                 return returnMap
             }
+        }
+
+        // 자동로그인 토큰값을 갱신하는 메서드
+        suspend fun updateUserAutoLoginToken(userDocumentId:String, newToken:String){
+            val firestore = FirebaseFirestore.getInstance()
+            val collectionReference = firestore.collection("UserData")
+            val documentReference = collectionReference.document(userDocumentId)
+            val tokenMap = mapOf(
+                "userAutoLoginToken" to newToken
+            )
+            documentReference.update(tokenMap).await()
         }
     }
 }

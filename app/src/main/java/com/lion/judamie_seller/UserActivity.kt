@@ -179,8 +179,8 @@ class UserActivity : AppCompatActivity() {
                 if(loginUserModel != null){
                     // ProductActivity를 실행하고 현재 Activity를 종료한다.
                     val productIntent = Intent(this@UserActivity, SellerActivity::class.java)
-                    productIntent.putExtra("user_document_id", loginUserModel.userDocumentId)
-                    productIntent.putExtra("user_nick_name", loginUserModel.userNickName)
+                    productIntent.putExtra("seller_document_id", loginUserModel.sellerDocumentId)
+                    productIntent.putExtra("seller_stoer_name", loginUserModel.sellerName)
                     startActivity(productIntent)
                     finish()
                 } else {
@@ -200,7 +200,7 @@ enum class UserFragmentName(var number:Int, var str:String){
     // 로그인 화면
     USER_LOGIN_FRAGMENT(1, "UserLoginFragment"),
     // 회원 가입 화면
-    USER_REGISTER_FRAGMENT(2, "UserRegisterFragment"),
+    USER_REGISTER_FRAGMENT(2, "RegisterFragment"),
     // 본인 인증 화면
-    USER_REGISTER_VERIFICATION_FRAGMENT(3, "UserRegisterVerificationFragment"),
+    USER_REGISTER_VERIFICATION_FRAGMENT(3, "RegisterVerificationFragment"),
 }

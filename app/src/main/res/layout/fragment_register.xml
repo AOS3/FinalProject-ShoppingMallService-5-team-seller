@@ -59,7 +59,8 @@
                         android:singleLine="true"
                         android:maxLength="15"
                         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                        android:text="@={registerViewModel.textFieldUserRegisterIDEditTextText}" />
+                        android:text="@={registerViewModel.textFieldUserRegisterIDEditTextText}"
+                        android:onTextChanged="@{() -> registerViewModel.textFieldUserRegisterIdOnTextChanged()}"/>/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
@@ -68,6 +69,16 @@
                     android:text="@{registerViewModel.textFieldUserRegisterIDEditTextText.length() + `/15`}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                     android:layout_marginTop="4dp" />
+
+                <Button
+                    android:id="@+id/buttonUserRegisterCheckId"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="중복확인"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:onClick="@{(view) -> registerViewModel.buttonUserRegisterCheckIdOnClick()}"/>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/textFieldUserRegisterPW"

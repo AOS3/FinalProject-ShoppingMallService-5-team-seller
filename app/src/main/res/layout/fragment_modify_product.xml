@@ -4,7 +4,7 @@
 
     <data>
         <variable
-            name="ModifyProductViewModel"
+            name="modifyProductViewModel"
             type="com.lion.judamie_seller.viewmodel.ModifyProductViewModel" />
     </data>
 
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             app:titleCentered="true"
             app:navigationIcon="@drawable/arrow_back_24px"
-            app:onNavigationClickModifyProduct="@{ModifyProductViewModel.ModifyProductFragment}"
+            app:onNavigationClickModifyProduct="@{modifyProductViewModel.modifyProductFragment}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -53,10 +53,9 @@
                         android:id="@+id/editTextProductName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@={ModifyProductViewModel.textFieldProductNameEditTextText}" />
+                        android:text="@={modifyProductViewModel.textFieldProductNameEditTextText}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- 상품 카테고리 -->
                 <Spinner
                     android:id="@+id/spinnerCategory"
                     android:layout_width="0dp"
@@ -83,7 +82,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="number"
-                        android:text="@={ModifyProductViewModel.textFieldProductPriceEditTextText}" />
+                        android:text="@={modifyProductViewModel.textFieldProductPriceEditTextText}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- 상품 할인율 -->
@@ -102,7 +101,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="numberDecimal"
-                        android:text="@={ModifyProductViewModel.textFieldProductDiscountRateEditTextText}" />
+                        android:text="@={modifyProductViewModel.textFieldProductDiscountRateEditTextText}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- 상품 재고 -->
@@ -121,7 +120,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="number"
-                        android:text="@={ModifyProductViewModel.textFieldProductStockEditTextText}" />
+                        android:text="@={modifyProductViewModel.textFieldProductStockEditTextText}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- 상품 설명 -->
@@ -140,7 +139,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textMultiLine"
-                        android:text="@={ModifyProductViewModel.textFieldProductDescriptionEditTextText}" />
+                        android:text="@={modifyProductViewModel.textFieldProductDescriptionEditTextText}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- 대표 이미지 설정 -->
@@ -156,7 +155,7 @@
 
                 <!-- 대표 이미지 추가 버튼 -->
                 <Button
-                    android:id="@+id/buttonAddMainImage"
+                    android:id="@+id/buttonModifyMainImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="대표 이미지 추가"
@@ -169,7 +168,7 @@
                     android:id="@+id/recyclerViewMainImages"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/buttonAddMainImage"
+                    app:layout_constraintTop_toBottomOf="@id/buttonModifyMainImage"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     tools:listitem="@layout/item_image_setting" />
@@ -187,7 +186,7 @@
 
                 <!-- 추가 이미지 추가 버튼 -->
                 <Button
-                    android:id="@+id/buttonAddAdditionalImage"
+                    android:id="@+id/buttonModifyAdditionalImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="추가 이미지 추가"
@@ -201,7 +200,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:scrollbars="horizontal"
-                    app:layout_constraintTop_toBottomOf="@id/buttonAddAdditionalImage"
+                    app:layout_constraintTop_toBottomOf="@id/buttonModifyAdditionalImage"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     tools:listitem="@layout/item_additional_image_setting" />
