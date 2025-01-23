@@ -13,14 +13,9 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.lion.judamie_seller.R
 import com.lion.judamie_seller.SellerActivity
 import com.lion.judamie_seller.databinding.FragmentProductManagementBinding
-import com.lion.judamie_seller.service.SellerService
 import com.lion.judamie_seller.util.ProductType
 import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.viewmodel.ProductManagementViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 
 class ProductManagementFragment() : Fragment() {
 
@@ -74,10 +69,6 @@ class ProductManagementFragment() : Fragment() {
                 true
             }
         }
-    }
-
-    fun moveToAddProduct() {
-        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_ADD_PRODUCT, true, true, null)
     }
 
     // 이전 화면으로 돌아가는 메서드

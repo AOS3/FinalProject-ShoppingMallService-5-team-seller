@@ -114,4 +114,9 @@ class ImageSettingAdapter(
         // 메인 이미지들로 구성된 리스트 반환
         return subImageViews
     }
+
+    fun clearImages() {
+        imageList.clear()  // Clear the list of images
+        notifyDataSetChanged()  // Notify the adapter that the data set has changed
+    }
 }

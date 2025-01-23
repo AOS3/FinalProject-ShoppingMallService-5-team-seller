@@ -15,6 +15,7 @@ class ProductVO {
     var productState = 0
     var productRegisterDate	= ""
     var productTimeStamp = 0L
+    var productReview = mutableListOf<String>()
 
     fun toProductModel(productDocumentId:String) : ProductModel {
         val productModel = ProductModel()
@@ -30,6 +31,7 @@ class ProductVO {
         productModel.productSubImage = productSubImage
         productModel.productRegisterDate = productRegisterDate
         productModel.productTimeStamp = productTimeStamp
+        productModel.productReview = productReview
 
         when (productState){
             ProductState.PRODUCT_STATE_NORMAL.number -> productModel.productState = ProductState.PRODUCT_STATE_NORMAL

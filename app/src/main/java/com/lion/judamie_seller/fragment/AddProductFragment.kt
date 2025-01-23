@@ -293,7 +293,7 @@ class AddProductFragment() : Fragment() {
             // 업로드
             CoroutineScope(Dispatchers.Main).launch {
                 // 이미지가 첨부되어 있다면
-                if(isSetImageView){
+                if(isSetImageView) {
                     val productModel = ProductModel()
                     // 서버상에서의 파일 이름
                     productMainFileName = "main_image_$productName.jpg"
@@ -301,27 +301,28 @@ class AddProductFragment() : Fragment() {
                     mainImagesAdapter.getMainImageView(recyclerViewMainImages)
                         ?.let { sellerActivity.saveMainImageView(it) }
 
-                    if (productModel.productSubImage.isNotEmpty()) {
-                        val imageView = subImagesAdapter.getSubImageViews(recyclerViewSubImages)
-                        val subImageCount = subImagesAdapter.itemCount
-                        // 서브 이미지 파일 이름을 리스트로 관리
-                        for (index in 0 until subImageCount) {
-                            // 고유한 파일 이름 생성
-                            productSubFileName =
-                                "sub_image_${productModel.productName}_${index}.jpg"
+                    val imageView = subImagesAdapter.getSubImageViews(recyclerViewSubImages)
+                    val subImageCount = subImagesAdapter.itemCount
+                    // 서브 이미지 파일 이름을 리스트로 관리
+                    for (index in 0 until subImageCount) {
+                        // 고유한 파일 이름 생성
+                        productSubFileName =
+                            "sub_image_${productName}_${index}.jpg"
 
-                            // 이미지 저장
-                            sellerActivity.saveSubImageViews(imageView)
+                        // 이미지 저장
+                        sellerActivity.saveSubImageViews(imageView)
 
-                            // 서브 이미지 파일 이름을 리스트에 추가
-                            productSubFileNames.add(productSubFileName)
-                        }
+                        // 서브 이미지 파일 이름을 리스트에 추가
+                        productSubFileNames.add(productSubFileName)
                     }
 
 
                     // 이미지 업로드
-                    val work1 = async(Dispatchers.IO){
-                        SellerService.uploadImage("${sellerActivity.filePath}/uploadMain.jpg", productMainFileName)
+                    val work1 = async(Dispatchers.IO) {
+                        SellerService.uploadImage(
+                            "${sellerActivity.filePath}/uploadMain.jpg",
+                            productMainFileName
+                        )
                         productSubFileNames.forEachIndexed() { index, productSubFileName ->
                             val uniqueFileName = "${sellerActivity.filePath}/uploadSub_${index}.jpg"
                             SellerService.uploadImage(uniqueFileName, productSubFileName)

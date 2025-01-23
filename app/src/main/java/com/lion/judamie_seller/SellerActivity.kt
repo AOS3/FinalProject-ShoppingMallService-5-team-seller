@@ -37,10 +37,6 @@ import kotlin.concurrent.thread
 
 
 class SellerActivity : AppCompatActivity() {
-
-    lateinit var activitySellerBinding: ActivitySellerBinding
-
-
     // 현재 Fragment와 다음 Fragment를 담을 변수(애니메이션 이동 때문에...)
     var newFragment: Fragment? = null
     var oldFragment: Fragment? = null
@@ -84,8 +80,6 @@ class SellerActivity : AppCompatActivity() {
             SellerFragmentType.SELLER_TYPE_ADD_PRODUCT -> AddProductFragment()
 
             SellerFragmentType.SELLER_TYPE_MODIFY_PRODUCT -> ModifyProductFragment()
-
-            SellerFragmentType.SELLER_TYPE_SHOW_ONE_PRODUCT_DETAIL -> ShowOneProductDetailFragment()
 
             SellerFragmentType.SELLER_TYPE_DETAIL_PRODUCT -> ShowOneProductDetailFragment()
 

@@ -1,5 +1,6 @@
 package com.lion.judamie_seller.fragment
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -14,6 +15,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
@@ -42,6 +44,9 @@ class ModifyProductFragment() : Fragment() {
 
     lateinit var productModel: ProductModel
 
+    // 현재 글의 문서 id를 담을 변수
+    lateinit var productDocumentId:String
+
     var isSetImageView = false
     lateinit var productBitmap: Bitmap
 
@@ -55,7 +60,6 @@ class ModifyProductFragment() : Fragment() {
     private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
     private var isMainImage = false
 
-    private val firestore = FirebaseFirestore.getInstance()
     var categoryName: String? = null
 
 
@@ -75,7 +79,11 @@ class ModifyProductFragment() : Fragment() {
 
         categoryName = arguments?.getString("categoryName")
 
+        gettingArguments()
+
         settingToolbar()
+
+        settingBoardData()
         // RecyclerView 초기화
         setupRecyclerViews()
         // Spinner 초기화
@@ -89,6 +97,11 @@ class ModifyProductFragment() : Fragment() {
         setupImagePicker()
 
         return fragmentModifyProductBinding.root
+    }
+
+    // arguments의 값을 변수에 담아준다.
+    fun gettingArguments(){
+        productDocumentId = arguments?.getString("productDocumentId")!!
     }
 
     private fun setupRecyclerViews() {
@@ -120,21 +133,94 @@ class ModifyProductFragment() : Fragment() {
         subImagesAdapter.addImage(ImageData(imageUrl = "res/drawable/ic_image_placeholder.png", isMainImage = false, isDefault = true))
 
         // 대표 이미지 추가 버튼
-        fragmentModifyProductBinding.buttonAddMainImage.setOnClickListener {
+        fragmentModifyProductBinding.buttonModifyMainImage.setOnClickListener {
             isMainImage = true
             openGallery()
         }
 
         // 추가 이미지 추가 버튼
-        fragmentModifyProductBinding.buttonAddAdditionalImage.setOnClickListener {
+        fragmentModifyProductBinding.buttonModifyAdditionalImage.setOnClickListener {
             isMainImage = false
             openGallery()
         }
     }
 
+    fun settingBoardData() {
+        // 서버에서 데이터를 가져온다.
+        CoroutineScope(Dispatchers.Main).launch {
+            val work1 = async(Dispatchers.IO) {
+                SellerService.selectProductDataOneById(productDocumentId)
+            }
+            productModel = work1.await()
+
+            fragmentModifyProductBinding.apply {
+                modifyProductViewModel?.textFieldProductNameEditTextText?.value = productModel.productName
+                modifyProductViewModel?.textFieldProductPriceEditTextText?.value = productModel.productPrice.toString()
+                modifyProductViewModel?.textFieldProductDiscountRateEditTextText?.value = productModel.productDiscountRate.toString()
+                modifyProductViewModel?.textFieldProductStockEditTextText?.value = productModel.productStock.toString()
+                modifyProductViewModel?.textFieldProductDescriptionEditTextText?.value = productModel.productDescription
+            }
+
+            // 첨부 이미지가 있다면
+            if(productModel.productMainImage != "none"){
+                val work1 = async(Dispatchers.IO) {
+                    // 이미지에 접근할 수 있는 uri를 가져온다.
+                    SellerService.gettingMainImage(productModel.productMainImage)
+                }
+
+                val imageUri = work1.await()
+                val recyclerMainView = fragmentModifyProductBinding.recyclerViewMainImages
+
+                sellerActivity.showServiceMainImage(
+                    imageUri,
+                    mainImagesAdapter.getMainImageView(recyclerMainView)!!
+                )
+
+                // 글에 이미지가 있는지...
+                isHasBitmap = true
+
+                // 이미지를 보여준다.
+                fragmentModifyProductBinding.buttonModifyMainImage.isVisible = true
+            }
+            // 서브 이미지 처리
+            if (productModel.productSubImage.isNotEmpty()) {
+                val work1 = async(Dispatchers.IO) {
+                    // 이미지에 접근할 수 있는 uri를 가져옵니다.
+                    SellerService.gettingSubImages(productModel.productSubImage)
+                }
+                // 이미지 Uri 배열을 가져옵니다.
+                val imageUri = work1.await()
+
+                // 서브 이미지가 없다면 기본 이미지 홀더 추가
+                if (subImagesAdapter.Items.isEmpty()) {
+                    subImagesAdapter.addImage(ImageData(imageUrl = "res/drawable/ic_image_placeholder.png", isMainImage = false, isDefault = true))
+                }
+
+                // 기존 이미지들 추가 (중복 추가 방지)
+                for (index in 0 until productModel.productSubImage.size) {
+                    val url = imageUri[index]
+
+                    // 이미 추가된 이미지가 아닌 경우에만 추가
+                    val isAlreadyAdded = subImagesAdapter.Items.any { it.imageUrl == url.toString() }
+                    if (!isAlreadyAdded) {
+                        subImagesAdapter.addImage(ImageData(imageUrl = url.toString(), isMainImage = false, isDefault = false))
+                    }
+                }
+            } else {
+                // 서브 이미지가 없으면 기본 이미지 홀더만 추가
+                if (subImagesAdapter.Items.isEmpty()) {
+                    subImagesAdapter.addImage(ImageData(imageUrl = "res/drawable/ic_image_placeholder.png", isMainImage = false, isDefault = true))
+                }
+            }
+
+            // 이미지 삭제 버튼을 보여준다.
+            fragmentModifyProductBinding.buttonModifyAdditionalImage.isVisible = true
+        }
+    }
+
     private fun setupImagePicker() {
         imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == android.app.Activity.RESULT_OK) {
+            if (result.resultCode == Activity.RESULT_OK) {
                 val imageUri: Uri? = result.data?.data
                 if (imageUri != null) {
                     if (isMainImage) {
@@ -174,14 +260,13 @@ class ModifyProductFragment() : Fragment() {
     // 툴바를 구성하는 메서드
     fun settingToolbar() {
         fragmentModifyProductBinding.apply {
-            toolbar.title = "상품추가"
+            toolbar.title = "상품 수정"
             toolbar.inflateMenu(R.menu.menu_product)
             toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menuItemProductDone-> {
                         proSellerAddSubmit()
                     }
-
                 }
                 true
             }
@@ -322,7 +407,12 @@ class ModifyProductFragment() : Fragment() {
                     // 서버상에서의 파일 이름
                     productModel.productMainImage = "image_${System.currentTimeMillis()}.jpg"
 
-                    val recyclerView = fragmentModifyProductBinding.recyclerViewMainImages
+                    val imageView = mainImagesAdapter.getMainImageView(fragmentModifyProductBinding.recyclerViewMainImages)
+                    if (imageView != null) {
+                        sellerActivity.saveImageView(imageView, productModel.productMainImage)
+                    } else {
+                        println("ImageView가 null입니다.")
+                    }
 
                     val work2 = async(Dispatchers.IO){
                         SellerService.uploadImage("${sellerActivity.filePath}/uploadTemp.jpg", productModel.productMainImage)
@@ -340,5 +430,4 @@ class ModifyProductFragment() : Fragment() {
             }
         }
     }
-
 }

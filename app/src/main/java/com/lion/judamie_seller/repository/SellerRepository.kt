@@ -80,7 +80,7 @@ class SellerRepository {
 
         // 서버에서 이미지 파일을 삭제한다.
         suspend fun removeImageFile(imageFileName:String){
-            val imageReference = FirebaseStorage.getInstance().reference.child("image/$imageFileName")
+            val imageReference = FirebaseStorage.getInstance().reference.child("image/$imageFileName.jpg")
             imageReference.delete().await()
         }
 

@@ -1,6 +1,7 @@
 package com.lion.judamie_seller.service
 
 import android.net.Uri
+import android.util.Log
 import com.lion.judamie_seller.model.ProductModel
 import com.lion.judamie_seller.repository.SellerRepository
 import com.lion.judamie_seller.repository.SellerRepository.Companion.gettingImage
@@ -36,6 +37,7 @@ class SellerService {
                 val productModel = productVO.toProductModel(documentId)
                 productList.add(productModel)
             }
+             Log.d("test100", " ${resultList.size} 카테고리 항목: ${productType.str}")
 
             return productList
         }
@@ -51,6 +53,20 @@ class SellerService {
         // 서버에서 이미지 파일을 삭제한다.
         suspend fun removeImageFile(imageFileName:String){
             SellerRepository.removeImageFile(imageFileName)
+        }
+
+        suspend fun removeImageFiles(imageFileNames: List<String>, productName: String) {
+            // productSubImages의 크기만큼 반복하면서 삭제할 파일 이름을 생성
+            val filteredFiles = imageFileNames.mapIndexed { index, _ ->
+                "sub_image_${productName}_$index"
+            }
+
+            // 생성된 파일 이름 목록에서 실제 파일 이름을 확인하고 삭제
+            filteredFiles.forEach { imageFileName ->
+                if (imageFileNames.contains(imageFileName)) {
+                    SellerRepository.removeImageFile(imageFileName)
+                }
+            }
         }
 
         // 서버에서 글을 삭제한다.
