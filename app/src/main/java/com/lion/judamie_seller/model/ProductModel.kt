@@ -17,6 +17,7 @@ class ProductModel {
     var productRegisterDate	= ""
     var productTimeStamp = 0L
     var productReview = mutableListOf<String>()
+    var productSeller = ""
 
     fun toProductVO() : ProductVO {
         val productVO = ProductVO()
@@ -32,6 +33,7 @@ class ProductModel {
         productVO.productRegisterDate = productRegisterDate
         productVO.productTimeStamp = productTimeStamp
         productVO.productReview = productReview
+        productVO.productSeller = productSeller
 
         return productVO
     }

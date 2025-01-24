@@ -6,6 +6,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.lion.judamie_seller.util.ProductType
 import com.lion.judamie_seller.util.SellerFragmentType
+import com.lion.judamie_seller.vo.OrderVO
 import com.lion.judamie_seller.vo.ProductVO
 import kotlinx.coroutines.tasks.await
 import java.io.File
@@ -52,6 +53,32 @@ class SellerRepository {
                     "documentId" to it.id,
                     // 데이터를 가지고 있는 객체
                     "productVO" to it.toObject(ProductVO::class.java)
+                )
+                resultList.add(map)
+            }
+            return resultList
+        }
+
+        // 글 목록을 가져오는 메서드
+        suspend fun gettingOrderList(productType: ProductType) : MutableList<Map<String, *>>{
+            val firestore = FirebaseFirestore.getInstance()
+            val collectionReference = firestore.collection("OrderData")
+            // 데이터를 가져온다.
+            val result = if(productType == ProductType.PRODUCT_TYPE_ALL){
+                collectionReference.orderBy("orderTimeStamp", Query.Direction.DESCENDING).get().await()
+            } else {
+                collectionReference.whereEqualTo("productCategory", productType.str)
+                    .orderBy("orderTimeStamp", Query.Direction.DESCENDING).get().await()
+            }
+            // 반환할 리스트
+            val resultList = mutableListOf<Map<String, *>>()
+            // 데이터의 수 만큼 반환한다.
+            result.forEach {
+                val map = mapOf(
+                    // 문서의 id
+                    "documentId" to it.id,
+                    // 데이터를 가지고 있는 객체
+                    "orderVO" to it.toObject(OrderVO::class.java)
                 )
                 resultList.add(map)
             }

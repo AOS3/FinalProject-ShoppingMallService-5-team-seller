@@ -179,8 +179,8 @@ class UserActivity : AppCompatActivity() {
                 if(loginUserModel != null){
                     // ProductActivity를 실행하고 현재 Activity를 종료한다.
                     val productIntent = Intent(this@UserActivity, SellerActivity::class.java)
-                    productIntent.putExtra("user_document_id", loginUserModel.userDocumentId)
-                    productIntent.putExtra("user_nick_name", loginUserModel.userNickName)
+                    productIntent.putExtra("user_document_id", loginUserModel.sellerDocumentId)
+                    productIntent.putExtra("user_nick_name", loginUserModel.storeName)
                     startActivity(productIntent)
                     finish()
                 } else {

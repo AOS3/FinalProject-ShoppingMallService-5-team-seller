@@ -155,8 +155,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:enabled="@{registerViewModel.isRegisterCompleteButtonEnabled}"
-            android:onClick="@{(view) -> registerViewModel.buttonUserVerificationOnClick()}" />
+            android:onClick="@{(view) -> registerViewModel.buttonVerificationOnClick()}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

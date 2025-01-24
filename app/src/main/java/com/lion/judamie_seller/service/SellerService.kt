@@ -2,12 +2,14 @@ package com.lion.judamie_seller.service
 
 import android.net.Uri
 import android.util.Log
+import com.lion.judamie_seller.model.OrderModel
 import com.lion.judamie_seller.model.ProductModel
 import com.lion.judamie_seller.repository.SellerRepository
 import com.lion.judamie_seller.repository.SellerRepository.Companion.gettingImage
 import com.lion.judamie_seller.repository.UserRepository
 import com.lion.judamie_seller.util.ProductType
 import com.lion.judamie_seller.util.SellerFragmentType
+import com.lion.judamie_seller.vo.OrderVO
 import com.lion.judamie_seller.vo.ProductVO
 import com.lion.judamie_seller.vo.UserVO
 
@@ -40,6 +42,22 @@ class SellerService {
              Log.d("test100", " ${resultList.size} 카테고리 항목: ${productType.str}")
 
             return productList
+        }
+
+        // 상품 목록을 가져오는 메서드
+        suspend fun gettingOrderList(productType: ProductType) : MutableList<OrderModel>{
+            // 글정보를 가져온다.
+            val orderList = mutableListOf<OrderModel>()
+            val resultList = SellerRepository.gettingOrderList(productType)
+
+            resultList.forEach {
+                val orderVO = it["orderVO"] as OrderVO
+                val documentId = it["documentId"] as String
+                val orderModel = orderVO.toOrderModel(documentId)
+                orderList.add(orderModel)
+            }
+
+            return orderList
         }
 
         // 글정보를 수정하는 메서드

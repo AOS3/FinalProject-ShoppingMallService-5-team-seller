@@ -5,27 +5,34 @@ import com.lion.judamie_seller.vo.UserVO
 
 class UserModel {
     // 문서 ID
-    var userDocumentId = ""
+    var sellerDocumentId = ""
     // 아이디
-    var userId = ""
+    var sellerId = ""
     // 비밀번호
-    var userPw = ""
+    var sellerPw = ""
+
+    var sellerPhoneNumber = ""
+
+    var storeName = ""
     // 자동 로그인 토큰
-    var userAutoLoginToken = ""
-    // 닉네임
-    var userNickName = ""
+    var sellerAutoLoginToken = ""
+
+    var sellerProducts = mutableListOf<String>()
     // 시간
-    var userTimeStamp = 0L
+    var sellerTimeStamp = 0L
     // 상태값
-    var userState = UserState.USER_STATE_NORMAL
+    var sellerState = UserState.USER_STATE_NORMAL
 
     fun toUserVO() : UserVO {
         val userVO = UserVO()
-        userVO.userId = userId
-        userVO.userPw = userPw
-        userVO.userAutoLoginToken = userAutoLoginToken
-        userVO.userTimeStamp = userTimeStamp
-        userVO.userState = userState.number
+        userVO.sellerId = sellerId
+        userVO.sellerPw = sellerPw
+        userVO.storeName = storeName
+        userVO.sellerPhoneNumber = sellerPhoneNumber
+        userVO.sellerProducts = sellerProducts
+        userVO.sellerAutoLoginToken = sellerAutoLoginToken
+        userVO.sellerTimeStamp = sellerTimeStamp
+        userVO.sellerState = sellerState.number
 
         return userVO
     }

@@ -24,6 +24,8 @@ class ProductManagementFragment() : Fragment() {
 
     private val categories = ProductType.values()
 
+    private lateinit var sellerStoreName: String
+    private lateinit var sellerDocumentId: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +36,8 @@ class ProductManagementFragment() : Fragment() {
         fragmentProductManagementViewBinding.lifecycleOwner = this@ProductManagementFragment
 
         sellerActivity = activity as SellerActivity
+
+        gettingArguments()
 
         settingToolbar()
 
@@ -49,6 +53,12 @@ class ProductManagementFragment() : Fragment() {
         }
 
         return fragmentProductManagementViewBinding.root
+    }
+
+    // arguments의 값을 변수에 담아준다.
+    fun gettingArguments() {
+        sellerStoreName = arguments?.getString("sellerStoreName")!!
+        sellerDocumentId = arguments?.getString("sellerDocumentId")!!
     }
 
     fun settingToolbar(){
@@ -89,6 +99,8 @@ class ProductManagementFragment() : Fragment() {
             return ProductCategoryFragment.newInstance(categories[position].str).apply {
                 arguments = Bundle().apply {
                     putInt("ProductType", categories[position].number) // 전달할 ProductType 추가
+                    putString("sellerStoreName", sellerStoreName) // 스토어 이름 전달
+                    putString("sellerDocumentId", sellerDocumentId) // 도큐멘트 ID 전달
                 }
             }
         }
