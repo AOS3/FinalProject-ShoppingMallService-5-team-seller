@@ -6,17 +6,15 @@ import com.lion.judamie_seller.model.OrderModel
 import com.lion.judamie_seller.model.ProductModel
 import com.lion.judamie_seller.repository.SellerRepository
 import com.lion.judamie_seller.repository.SellerRepository.Companion.gettingImage
-import com.lion.judamie_seller.repository.UserRepository
 import com.lion.judamie_seller.util.ProductType
-import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.vo.OrderVO
 import com.lion.judamie_seller.vo.ProductVO
 import com.lion.judamie_seller.vo.UserVO
 
 class SellerService {
     companion object {
-        suspend fun uploadImage(sourceFilePath:String, serverFilePath:String){
-            SellerRepository.uploadImage(sourceFilePath, serverFilePath)
+        suspend fun uploadImage(sourceFilePath:String, serverFilePath:String, isMainImage: Boolean){
+            SellerRepository.uploadImage(sourceFilePath, serverFilePath, isMainImage)
         }
 
         suspend fun addProductData(productModel: ProductModel): String {
@@ -73,18 +71,8 @@ class SellerService {
             SellerRepository.removeImageFile(imageFileName)
         }
 
-        suspend fun removeImageFiles(imageFileNames: List<String>, productName: String) {
-            // productSubImages의 크기만큼 반복하면서 삭제할 파일 이름을 생성
-            val filteredFiles = imageFileNames.mapIndexed { index, _ ->
-                "sub_image_${productName}_$index"
-            }
-
-            // 생성된 파일 이름 목록에서 실제 파일 이름을 확인하고 삭제
-            filteredFiles.forEach { imageFileName ->
-                if (imageFileNames.contains(imageFileName)) {
-                    SellerRepository.removeImageFile(imageFileName)
-                }
-            }
+        suspend fun removeImageFiles(imageFileNames: List<String>) {
+            SellerRepository.removeImageFiles(imageFileNames)
         }
 
         // 서버에서 글을 삭제한다.
@@ -104,13 +92,13 @@ class SellerService {
 
         // 이미지 데이터를 가져온다.
         suspend fun gettingMainImage(imageFileName:String) : Uri {
-            val imageUri = SellerRepository.gettingImage(imageFileName)
+            val imageUri = SellerRepository.gettingImage(imageFileName, true)
             return imageUri
         }
 
         suspend fun gettingSubImages(imageFileNames: List<String>): List<Uri> {
             return imageFileNames.map { imageFileName ->
-                gettingImage(imageFileName) // 개별 이미지를 처리
+                gettingImage(imageFileName, false) // 개별 이미지를 처리
             }
         }
     }

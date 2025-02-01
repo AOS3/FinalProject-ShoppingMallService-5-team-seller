@@ -105,8 +105,7 @@ class OrderCategoryFragment : Fragment() {
 
     // 게시판 타입 값을 담는 메서드
     fun settingProductType(){
-        val tempType = arguments?.getInt("ProductType")!!
-        when(tempType){
+        when(productType.number){
             ProductType.PRODUCT_TYPE_ALL.number -> {
                 productType = ProductType.PRODUCT_TYPE_ALL
             }

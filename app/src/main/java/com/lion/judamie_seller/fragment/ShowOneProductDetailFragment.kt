@@ -160,11 +160,8 @@ class ShowOneProductDetailFragment : Fragment() {
             // 만약 첨부 이미지가 있다면 삭제한다.
             if(productModel.productName != "none"){
                 val work1 = async(Dispatchers.IO){
-                    SellerService.removeImageFile("main_image_${productModel.productName}")
-                    for (index in 0 until productModel.productSubImage.size) {
-                        val fileName = "sub_image_${productModel.productName}_$index"
-                        SellerService.removeImageFiles(productModel.productSubImage, fileName)
-                    }
+                    SellerService.removeImageFile(productModel.productMainImage)
+                    SellerService.removeImageFiles(productModel.productSubImage)
                 }
                 work1.join()
             }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.divider.MaterialDividerItemDecoration
@@ -21,6 +22,7 @@ import com.lion.judamie_seller.util.ProductType
 import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.viewmodel.CategoryViewModel
 import com.lion.judamie_seller.viewmodel.rowviewmodel.RowProductCategoryListViewModel
+import com.lion.judamie_seller.viewmodel.rowviewmodel.productViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -33,22 +35,9 @@ class ProductCategoryFragment : Fragment() {
     var categoryName: String? = null
     lateinit var productType: ProductType
 
+    private val productViewModel: productViewModel by activityViewModels()
+
     var recyclerViewList = mutableListOf<ProductModel>()
-
-    companion object {
-        private const val ARG_CATEGORY_NAME = "categoryName"
-
-        fun newInstance(categoryName: String): ProductCategoryFragment {
-            val fragment = ProductCategoryFragment()
-            val args = Bundle()
-            args.putString(ARG_CATEGORY_NAME, categoryName)
-            fragment.arguments = args
-            return fragment
-        }
-    }
-
-    private lateinit var sellerStoreName: String
-    private lateinit var sellerDocumentId: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,22 +51,16 @@ class ProductCategoryFragment : Fragment() {
 
         recyclerViewList.clear()
 
-        categoryName = arguments?.getString(ARG_CATEGORY_NAME)
+        val productTypeNumber = arguments?.getInt("ProductType") ?: ProductType.PRODUCT_TYPE_ALL.number
+        productType = ProductType.values().first { it.number == productTypeNumber }
 
-        gettingArgument()
-
-        settingProductType()
+        categoryName = arguments?.getString("categoryName") ?: "전체"
 
         settingRecyclerView()
 
         refreshCategoryRecyclerView()
 
         return fragmentCategoryBinding.root
-    }
-
-    fun gettingArgument() {
-        sellerStoreName = arguments?.getString("sellerStoreName")!!
-        sellerDocumentId = arguments?.getString("sellerDocumentId")!!
     }
 
     // RecyclerView 설정 메서드
@@ -97,63 +80,15 @@ class ProductCategoryFragment : Fragment() {
 
     fun refreshCategoryRecyclerView() {
         CoroutineScope(Dispatchers.Main).launch {
+
             val work1 = async(Dispatchers.IO) {
                 // 선택된 카테고리(`productType`)에 해당하는 데이터만 가져옴
                 SellerService.gettingProductList(productType)
             }
             recyclerViewList = work1.await()
 
-            // sellerStoreName과 일치하는 항목만 필터링
-            recyclerViewList = recyclerViewList.filter { it.productSeller == sellerStoreName }.toMutableList()
-
             // RecyclerView 업데이트
             fragmentCategoryBinding.recyclerviewCategoryList.adapter?.notifyDataSetChanged()
-        }
-    }
-
-    // 게시판 타입 값을 담는 메서드
-    fun settingProductType(){
-        val tempType = arguments?.getInt("ProductType")!!
-        when(tempType){
-            ProductType.PRODUCT_TYPE_ALL.number -> {
-                productType = ProductType.PRODUCT_TYPE_ALL
-            }
-            ProductType.PRODUCT_TYPE_WINE.number -> {
-                productType = ProductType.PRODUCT_TYPE_WINE
-            }
-            ProductType.PRODUCT_TYPE_WHISKEY.number -> {
-                productType = ProductType.PRODUCT_TYPE_WHISKEY
-            }
-            ProductType.PRODUCT_TYPE_VODKA.number -> {
-                productType = ProductType.PRODUCT_TYPE_VODKA
-            }
-            ProductType.PRODUCT_TYPE_TEQUILA.number -> {
-                productType = ProductType.PRODUCT_TYPE_TEQUILA
-            }
-            ProductType.PRODUCT_TYPE_DOMESTIC.number -> {
-                productType = ProductType.PRODUCT_TYPE_DOMESTIC
-            }
-            ProductType.PRODUCT_TYPE_SAKE.number -> {
-                productType = ProductType.PRODUCT_TYPE_SAKE
-            }
-            ProductType.PRODUCT_TYPE_RUM.number -> {
-                productType = ProductType.PRODUCT_TYPE_RUM
-            }
-            ProductType.PRODUCT_TYPE_LIQUEUR.number -> {
-                productType = ProductType.PRODUCT_TYPE_LIQUEUR
-            }
-            ProductType.PRODUCT_TYPE_CHINESE.number -> {
-                productType = ProductType.PRODUCT_TYPE_CHINESE
-            }
-            ProductType.PRODUCT_TYPE_BRANDY.number -> {
-                productType = ProductType.PRODUCT_TYPE_BRANDY
-            }
-            ProductType.PRODUCT_TYPE_BEER.number -> {
-                productType = ProductType.PRODUCT_TYPE_BEER
-            }
-            ProductType.PRODUCT_TYPE_NON_ALCOHOL.number -> {
-                productType = ProductType.PRODUCT_TYPE_NON_ALCOHOL
-            }
         }
     }
 
@@ -198,5 +133,4 @@ class ProductCategoryFragment : Fragment() {
             }
         }
     }
-
 }

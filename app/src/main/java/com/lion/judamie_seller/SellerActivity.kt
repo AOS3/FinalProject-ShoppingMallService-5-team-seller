@@ -67,9 +67,6 @@ class SellerActivity : AppCompatActivity() {
         }
         filePath = getExternalFilesDir(null).toString()
 
-        // 앨범에서 사진을 가져오는 런처 구성하는 메서드를 호출한다.
-        settingAlbumLauncher()
-
         val dataBundle = intent.extras
 
         // 첫 프래그먼트를 보여준다.
@@ -179,130 +176,6 @@ class SellerActivity : AppCompatActivity() {
         return result
     }
 
-    // 앨범에서 사진을 가져오는 런처 구성한다.
-    fun settingAlbumLauncher(){
-        // PhotoPicker를 실행할 수 있도록 런처를 구성해준다.
-        albumLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()){
-            // 가져온 사진이 있다면
-            if(it != null){
-                var bitmap:Bitmap? = null
-
-                // android 10 버전 이상이라면
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-                    // 이미지 객체를 생성할 수 있는 디코드를 생성한다.
-                    val source = ImageDecoder.createSource(contentResolver, it)
-                    // Bitmap 객체를 생성한다.
-                    bitmap = ImageDecoder.decodeBitmap(source)
-                } else {
-                    // ContentProvider를 통해 사진 데이터를 가져온다.
-                    val cursor = contentResolver.query(it, null, null, null, null)
-                    if(cursor != null){
-                        cursor.moveToNext()
-
-                        // 이미지의 경로를 가져온다.
-                        val idx = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
-                        val source = cursor.getString(idx)
-
-                        // 이미지를 생성한다.
-                        bitmap = BitmapFactory.decodeFile(source)
-                    }
-                }
-
-                // 크기를 조정한 이미지를 가져온다.
-                val resizeBitmap = resizeBitmap(1024, bitmap!!)
-
-                // 현재 프래그먼트가 무엇인지 분기한다.
-                if(pictureFragment != null) {
-                    // 글을 작성하는 Fragment라면
-                    if (pictureFragment is AddProductFragment) {
-                        val f1 = pictureFragment as AddProductFragment
-                        // 이미지 뷰에 설정해준다.
-                        val mainImages = f1.mainImagesAdapter.Items
-
-                        val mainImage = mainImages.find { it.isMainImage } // 메인 이미지 찾기
-                        mainImage?.let {
-                            // 메인 이미지 설정 작업
-                            it.imageBitmap = resizeBitmap // 새로 가져온 이미지를 bitmap에 설정
-                        }
-
-                        // 어댑터에 변경사항 알림
-                        f1.mainImagesAdapter.notifyDataSetChanged()
-
-                        // RecyclerView의 해당 위치에 이미지를 설정
-                        val position = mainImages.indexOf(mainImage)
-                        val viewHolder = f1.fragmentAddProductBinding.recyclerViewMainImages
-                            .findViewHolderForAdapterPosition(position) as? ImageSettingAdapter.ImageViewHolder
-
-                        viewHolder?.getImageViewPreview()
-                            ?.setImageBitmap(resizeBitmap) // 메인 이미지로 설정
-
-                        f1.isSetImageView = true
-
-                        val subImages = f1.subImagesAdapter.Items
-
-                        val subImage = subImages.find { !it.isMainImage }
-                        subImage?.let {
-                            it.imageBitmap = resizeBitmap
-                        }
-
-                        // 어댑터에 변경사항 알림
-                        f1.subImagesAdapter.notifyDataSetChanged()
-
-                        // RecyclerView의 해당 위치에 이미지를 설정
-                        val subPosition = subImages.indexOf(subImage)
-                        val subViewHolder = f1.fragmentAddProductBinding.recyclerViewSubImages
-                            .findViewHolderForAdapterPosition(subPosition) as? ImageSettingAdapter.ImageViewHolder
-
-                        subViewHolder?.getImageViewPreview()
-                            ?.setImageBitmap(resizeBitmap) // 추가 이미지로 설정
-
-                    }
-                    // 글을 수정하는 Fragment 라면
-                    else if (pictureFragment is ModifyProductFragment) {
-                        val f1 = pictureFragment as ModifyProductFragment
-                        if (f1.isMainBitmap) {
-                            // 이미지 뷰에 설정해준다.
-                            val mainImages = f1.mainImagesAdapter.Items
-
-                            val mainImage = mainImages.find { it.isMainImage } // 메인 이미지 찾기
-                            mainImage?.let {
-                                // 메인 이미지 설정 작업
-                                it.imageBitmap = resizeBitmap // 새로 가져온 이미지를 bitmap에 설정
-                            }
-
-                            // RecyclerView의 해당 위치에 이미지를 설정
-                            val position = mainImages.indexOf(mainImage)
-                            val viewHolder = f1.fragmentModifyProductBinding.recyclerViewMainImages
-                                .findViewHolderForAdapterPosition(position) as? ImageSettingAdapter.ImageViewHolder
-
-                            viewHolder?.getImageViewPreview()
-                                ?.setImageBitmap(resizeBitmap) // 메인 이미지로 설정
-
-                            f1.isModifyBitmap = true
-                        } else {
-                            val subImages = f1.subImagesAdapter.Items
-
-                            val subImage = subImages.find { !it.isMainImage }
-                            subImage?.let {
-                                it.imageBitmap = resizeBitmap
-                            }
-
-                            // RecyclerView의 해당 위치에 이미지를 설정
-                            val subPosition = subImages.indexOf(subImage)
-                            val subViewHolder =
-                                f1.fragmentModifyProductBinding.recyclerViewSubImages
-                                    .findViewHolderForAdapterPosition(subPosition) as? ImageSettingAdapter.ImageViewHolder
-
-                            subViewHolder?.getImageViewPreview()
-                                ?.setImageBitmap(resizeBitmap) // 추가 이미지로 설정
-                            f1.isModifyBitmap = true
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     fun saveSubImageViews(imageViews: List<ImageView>) {
         // ImageView 리스트 전체를 순회
         imageViews.forEachIndexed { index, imageView ->
@@ -314,6 +187,32 @@ class SellerActivity : AppCompatActivity() {
             if (bitmap != null) {
                 // 고유한 파일 이름 생성 (이미지 인덱스를 붙여서 저장)
                 val fileName = "UploadSub_$index.jpg"
+                val file = File("$filePath/$fileName")
+
+                // 파일로 저장
+                try {
+                    val fileOutputStream = FileOutputStream(file)
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream)
+                    fileOutputStream.flush()
+                    fileOutputStream.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    fun saveModifySubImageViews(imageViews: List<ImageView>, prevListSize: Int) {
+        // ImageView 리스트 전체를 순회
+        imageViews.forEachIndexed { index, imageView ->
+            // 이미지 데이터를 추출
+            val bitmapDrawable = imageView.drawable as? BitmapDrawable
+            val bitmap = bitmapDrawable?.bitmap
+
+            // 만약 비트맵이 null이라면 저장을 건너뛰기
+            if (bitmap != null) {
+                // 고유한 파일 이름 생성 (이미지 인덱스를 붙여서 저장)
+                val fileName = "UploadSub_${prevListSize - 1 + index}.jpg"
                 val file = File("$filePath/$fileName")
 
                 // 파일로 저장

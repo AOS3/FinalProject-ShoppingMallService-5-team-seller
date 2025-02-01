@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.play.integrity.internal.f
 import com.lion.judamie_seller.R
 import com.lion.judamie_seller.fragment.ModifyProductFragment
 
@@ -16,6 +17,9 @@ class ModifyProductViewModel(val ModifyProductFragment: ModifyProductFragment) :
     val textFieldProductDiscountRateEditTextText = MutableLiveData("")
     val textFieldProductStockEditTextText = MutableLiveData("")
     val textFieldProductDescriptionEditTextText = MutableLiveData("")
+
+    var isModifyBitmap: Boolean = false
+    var isRemoveVitmap: Boolean = false
 
     companion object {
         @JvmStatic

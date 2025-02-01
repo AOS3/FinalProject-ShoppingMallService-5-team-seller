@@ -6,13 +6,14 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.lion.judamie_seller.databinding.ItemImageSettingBinding
 import com.lion.judamie_seller.model.ImageData
+import com.lion.judamie_seller.viewmodel.ModifyProductViewModel
 
-class ImageSettingAdapter(
+class ModifySettingAdapter(
     private val onRemoveClick: (Int) -> Unit,
-) : RecyclerView.Adapter<ImageSettingAdapter.ImageViewHolder>() {
+    private val viewModel:ModifyProductViewModel
+) : RecyclerView.Adapter<ModifySettingAdapter.ImageViewHolder>() {
 
     private val imageList = mutableListOf<ImageData>()
-    private var isButtonEnabled: Boolean = true
 
     val Items: List<ImageData>
         get() = imageList
@@ -21,12 +22,8 @@ class ImageSettingAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(imageData: ImageData, position: Int) {
             binding.imageData = imageData
-            binding.buttonRemoveImage.isEnabled = isButtonEnabled
-
             binding.buttonRemoveImage.setOnClickListener {
-                if (isButtonEnabled) {
-                    onRemoveClick(position)
-                }
+                onRemoveClick(position)
             }
 
             binding.executePendingBindings() // 강제 바인딩
@@ -52,6 +49,7 @@ class ImageSettingAdapter(
 
     fun addImage(imageData: ImageData) {
         imageList.add(imageData)
+        viewModel.isModifyBitmap = true
         notifyItemInserted(imageList.size - 1)
     }
 
@@ -61,17 +59,12 @@ class ImageSettingAdapter(
         notifyDataSetChanged() // RecyclerView에 전체 데이터 변경 알림
     }
 
-    // 🔹 버튼 활성화/비활성화 설정 함수 추가
-    fun setButtonEnabled(enabled: Boolean) {
-        isButtonEnabled = enabled
-        notifyDataSetChanged() // 변경 사항 반영
-    }
-
     fun removeImage(position: Int) {
         if (position in imageList.indices) {
             imageList.removeAt(position)
             notifyItemRemoved(position) // 삭제된 위치를 RecyclerView에 알림
             notifyItemRangeChanged(position, imageList.size)
+            viewModel.isRemoveVitmap = true
 
             // 이미지가 모두 삭제된 경우 기본 이미지 추가
             if (imageList.isEmpty()) {
@@ -105,7 +98,7 @@ class ImageSettingAdapter(
     fun getSubImageViews(recyclerView: RecyclerView): List<ImageView> {
         val subImageViews = mutableListOf<ImageView>()
 
-                for (imageData in imageList) {
+        for (imageData in imageList) {
             if (!imageData.isMainImage) {
                 // Main image가 설정된 경우, 해당 이미지의 ImageView를 찾기 위해 position을 가져옴
                 val position = imageList.indexOf(imageData)
