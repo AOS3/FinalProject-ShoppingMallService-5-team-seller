@@ -16,6 +16,7 @@ import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
@@ -23,30 +24,32 @@ import com.google.firebase.storage.FirebaseStorage
 import com.lion.judamie_seller.R
 import com.lion.judamie_seller.SellerActivity
 import com.lion.judamie_seller.adapter.ImageSettingAdapter
+import com.lion.judamie_seller.adapter.ModifySettingAdapter
 import com.lion.judamie_seller.databinding.FragmentAddProductBinding
 import com.lion.judamie_seller.model.ImageData
 import com.lion.judamie_seller.model.ProductModel
 import com.lion.judamie_seller.service.SellerService
-import com.lion.judamie_seller.util.ProductType
 import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.viewmodel.AddProductViewModel
+import com.lion.judamie_seller.viewmodel.rowviewmodel.productViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class AddProductFragment() : Fragment() {
 
-    private lateinit var fragmentAddProductBinding: FragmentAddProductBinding
+    lateinit var fragmentAddProductBinding: FragmentAddProductBinding
     private lateinit var sellerActivity: SellerActivity
     // ViewModel 초기화
     private val addProductViewModel: AddProductViewModel by lazy {
         AddProductViewModel(this@AddProductFragment)
     }
+
+    private val productViewModel: productViewModel by activityViewModels()
 
     var isSetImageView = false
 
@@ -55,9 +58,8 @@ class AddProductFragment() : Fragment() {
 
     var categoryName: String? = null
 
-
-    private lateinit var mainImagesAdapter: ImageSettingAdapter
-    private lateinit var subImagesAdapter: ImageSettingAdapter
+    lateinit var mainImagesAdapter: ImageSettingAdapter
+    lateinit var subImagesAdapter: ImageSettingAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,6 +75,15 @@ class AddProductFragment() : Fragment() {
         categoryName = arguments?.getString("categoryName")
 
         settingToolbar()
+
+        mainImagesAdapter = ImageSettingAdapter(
+            onRemoveClick = { position -> mainImagesAdapter.removeImage(position) },
+        )
+
+        subImagesAdapter = ImageSettingAdapter(
+            onRemoveClick = { position -> subImagesAdapter.removeImage(position)}
+        )
+
         // RecyclerView 초기화
         setupRecyclerViews()
         // Spinner 초기화
@@ -88,11 +99,6 @@ class AddProductFragment() : Fragment() {
 
     private fun setupRecyclerViews() {
         // 메인 이미지 RecyclerView 설정
-        mainImagesAdapter = ImageSettingAdapter(
-            onRemoveClick = { position -> mainImagesAdapter.removeImage(position) },
-        )
-
-
         fragmentAddProductBinding.recyclerViewMainImages.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = mainImagesAdapter
@@ -100,11 +106,6 @@ class AddProductFragment() : Fragment() {
 
         // 초기 대표 이미지 추가
         mainImagesAdapter.addImage(ImageData(imageUrl = "res/drawable/ic_image_placeholder.png", isMainImage = true, isDefault = true))
-
-        // 서브 이미지 RecyclerView 설정
-        subImagesAdapter = ImageSettingAdapter(
-            onRemoveClick = { position -> subImagesAdapter.removeImage(position) },
-        )
 
         fragmentAddProductBinding.recyclerViewSubImages.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -226,8 +227,6 @@ class AddProductFragment() : Fragment() {
     // 글 작성 완료 처리 메서드
     fun proSellerAddSubmit(){
         fragmentAddProductBinding.apply {
-            var imageName = ""
-
             val productName = addProductViewModel?.textFieldProductNameEditTextText?.value!!
 
             val productCategoryText = fragmentAddProductBinding.spinnerCategory.selectedItem.toString()
@@ -292,39 +291,43 @@ class AddProductFragment() : Fragment() {
 
             // 업로드
             CoroutineScope(Dispatchers.Main).launch {
+                showLoadingIndicator(true)
+                setUIEnabled(false)
+
                 // 이미지가 첨부되어 있다면
-                if(isSetImageView){
+                if(isSetImageView) {
                     val productModel = ProductModel()
                     // 서버상에서의 파일 이름
-                    productMainFileName = "main_image_$productName.jpg"
+                    productMainFileName = "main_image_${System.currentTimeMillis()}.jpg"
                     // 로컬에 ImageView에 있는 이미지 데이터를 저장한다.
                     mainImagesAdapter.getMainImageView(recyclerViewMainImages)
                         ?.let { sellerActivity.saveMainImageView(it) }
 
-                    if (productModel.productSubImage.isNotEmpty()) {
-                        val imageView = subImagesAdapter.getSubImageViews(recyclerViewSubImages)
-                        val subImageCount = subImagesAdapter.itemCount
-                        // 서브 이미지 파일 이름을 리스트로 관리
-                        for (index in 0 until subImageCount) {
-                            // 고유한 파일 이름 생성
-                            productSubFileName =
-                                "sub_image_${productModel.productName}_${index}.jpg"
+                    val imageView = subImagesAdapter.getSubImageViews(recyclerViewSubImages)
+                    val subImageCount = subImagesAdapter.itemCount
+                    // 서브 이미지 파일 이름을 리스트로 관리
+                    for (index in 0 until subImageCount) {
+                        // 고유한 파일 이름 생성
+                        productSubFileName =
+                            "sub_image_${System.currentTimeMillis()}.jpg"
 
-                            // 이미지 저장
-                            sellerActivity.saveSubImageViews(imageView)
+                        // 이미지 저장
+                        sellerActivity.saveSubImageViews(imageView)
 
-                            // 서브 이미지 파일 이름을 리스트에 추가
-                            productSubFileNames.add(productSubFileName)
-                        }
+                        // 서브 이미지 파일 이름을 리스트에 추가
+                        productSubFileNames.add(productSubFileName)
                     }
 
 
                     // 이미지 업로드
-                    val work1 = async(Dispatchers.IO){
-                        SellerService.uploadImage("${sellerActivity.filePath}/uploadMain.jpg", productMainFileName)
+                    val work1 = async(Dispatchers.IO) {
+                        SellerService.uploadImage(
+                            "${sellerActivity.filePath}/uploadMain.jpg",
+                            productMainFileName, true
+                        )
                         productSubFileNames.forEachIndexed() { index, productSubFileName ->
-                            val uniqueFileName = "${sellerActivity.filePath}/uploadSub_${index}.jpg"
-                            SellerService.uploadImage(uniqueFileName, productSubFileName)
+                            val uniqueFileName = "${sellerActivity.filePath}/uploadSub_$index.jpg"
+                            SellerService.uploadImage(uniqueFileName, productSubFileName, false)
                             Log.d("UploadSub Success", uniqueFileName)
                         }
                     }
@@ -348,6 +351,7 @@ class AddProductFragment() : Fragment() {
                 productModel.productSubImage = productSubFileNames
                 productModel.productRegisterDate = formattedDate
                 productModel.productTimeStamp = productTimeStamp
+                productModel.productSeller = productViewModel.sellerStoreName.toString()
                 // 저장한다.
                 val work2 = async(Dispatchers.IO){
                     SellerService.addProductData(productModel)
@@ -359,6 +363,28 @@ class AddProductFragment() : Fragment() {
                 dataBundle.putString("productDocumentId", documentId)
                 sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_PRODUCT_MANAGEMENT, true, true, dataBundle)
             }
+            // 로딩 인디케이터 숨기기 및 UI 활성화
+            showLoadingIndicator(false)
+            setUIEnabled(true)
+        }
+    }
+
+    fun showLoadingIndicator(show: Boolean) {
+        fragmentAddProductBinding.loadingIndicator.visibility = if (show) View.VISIBLE else View.GONE
+    }
+
+    fun setUIEnabled(enabled: Boolean) {
+        fragmentAddProductBinding.apply {
+            mainImagesAdapter.setButtonEnabled(false)
+            subImagesAdapter.setButtonEnabled(false)
+            buttonAddMainImage.isEnabled = enabled
+            buttonAddAdditionalImage.isEnabled = enabled
+            fragmentAddProductBinding.spinnerCategory.isEnabled = false
+            textInputProductName.isEnabled = enabled
+            textInputPrice.isEnabled = enabled
+            textInputDiscount.isEnabled = enabled
+            textInputStock.isEnabled = enabled
+            textInputDescription.isEnabled = enabled
         }
     }
 }

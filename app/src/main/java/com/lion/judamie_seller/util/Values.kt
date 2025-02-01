@@ -30,8 +30,6 @@ enum class SellerFragmentType(val number:Int, val str:String){
     SELLER_TYPE_DETAIL_ORDER(8, "주문 상세 정보"),
 
     SELLER_TYPE_DETAIL_SALES(9, "매출 상세"),
-
-    SELLER_TYPE_SHOW_ONE_PRODUCT_DETAIL(10, "제품 상세")
 }
 
 enum class ProductState(val number:Int, val str:String){
@@ -56,4 +54,12 @@ enum class ProductType(val number:Int, val str:String){
     PRODUCT_TYPE_BRANDY(10, "브랜디"),
     PRODUCT_TYPE_BEER(11, "맥주"),
     PRODUCT_TYPE_NON_ALCOHOL(12, "논알콜")
+}
+
+// 로그인 결과
+enum class LoginResult(val number:Int, val str:String){
+    LOGIN_RESULT_SUCCESS(1, "로그인 성공"),
+    LOGIN_RESULT_ID_NOT_EXIST(2, "존재하지 않는 아이디"),
+    LOGIN_RESULT_PASSWORD_INCORRECT(3, "잘못된 비밀번호"),
+    LOGIN_RESULT_SIGNOUT_MEMBER(4, "탈퇴한 회원"),
 }

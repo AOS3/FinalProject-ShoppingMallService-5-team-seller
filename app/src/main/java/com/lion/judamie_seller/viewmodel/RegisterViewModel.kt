@@ -22,25 +22,55 @@ class RegisterViewModel(val registerFragment: RegisterFragment) : ViewModel() {
     // textFieldUserRegisterStoreNameEditTextText - EditText - text
     val textFieldUserRegisterStoreNameEditTextText = MutableLiveData("")
 
-    // 버튼 활성화 상태를 나타내는 LiveData
-    private val _isRegisterCompleteButtonEnabled = MediatorLiveData<Boolean>()
-    val isRegisterCompleteButtonEnabled: LiveData<Boolean> get() = _isRegisterCompleteButtonEnabled
+    // buttonLoginNextStep - onClick
+    fun buttonVerificationOnClick() {
+        registerFragment.apply {
 
-    init {
-        // 각 입력 필드의 변화를 감지하여 validateInputs 호출
-        _isRegisterCompleteButtonEnabled.addSource(textFieldUserRegisterIDEditTextText) { validateInputs() }
-        _isRegisterCompleteButtonEnabled.addSource(textFieldUserRegisterPWEditTextText) { validateInputs() }
-        _isRegisterCompleteButtonEnabled.addSource(textFieldUserRegisterPW2EditTextText) { validateInputs() }
-        _isRegisterCompleteButtonEnabled.addSource(textFieldUserRegisterStoreNameEditTextText) { validateInputs() }
-    }
+            // 입력 요소 검사
+            if (textFieldUserRegisterIDEditTextText.value?.isEmpty()!!) {
+                // 아이디 입력란에 에러 메시지 표시
+                fragmentRegisterViewBinding.textFieldUserRegisterID.error = "아이디를 입력해주세요"
+                userActivity.showSoftInput(fragmentRegisterViewBinding.textFieldUserRegisterID.editText!!)
+                return
+            }
 
-    private fun validateInputs() {
-        _isRegisterCompleteButtonEnabled.value =
-            !(textFieldUserRegisterIDEditTextText.value.isNullOrBlank() || textFieldUserRegisterPWEditTextText.value.isNullOrBlank() || textFieldUserRegisterPW2EditTextText.value.isNullOrBlank() || textFieldUserRegisterStoreNameEditTextText.value.isNullOrBlank())
-    }
+            if (textFieldUserRegisterPWEditTextText.value?.isEmpty()!!) {
+                // 비밀번호 입력란에 에러 메시지 표시
+                fragmentRegisterViewBinding.textFieldUserRegisterPW.error = "비밀번호를 입력해주세요"
+                userActivity.showSoftInput(fragmentRegisterViewBinding.textFieldUserRegisterPW.editText!!)
+                return
+            }
 
-    fun buttonUserVerificationOnClick(){
-        registerFragment.moveToUserVerification()
+            if (textFieldUserRegisterPW2EditTextText.value?.isEmpty()!!) {
+                // 비밀번호 확인 입력란에 에러 메시지 표시
+                fragmentRegisterViewBinding.textFieldUserRegisterPW2.error = "비밀번호를 입력해주세요"
+                userActivity.showSoftInput(fragmentRegisterViewBinding.textFieldUserRegisterPW2.editText!!)
+                return
+            }
+
+            if (textFieldUserRegisterPWEditTextText.value != textFieldUserRegisterPW2EditTextText.value) {
+                // 비밀번호 불일치 에러 메시지 표시
+                fragmentRegisterViewBinding.textFieldUserRegisterPW.error = "비밀번호가 다릅니다"
+                fragmentRegisterViewBinding.textFieldUserRegisterPW2.error = "비밀번호가 다릅니다"
+                fragmentRegisterViewBinding.registerViewModel?.textFieldUserRegisterPWEditTextText?.value = ""
+                fragmentRegisterViewBinding.registerViewModel?.textFieldUserRegisterPW2EditTextText?.value = ""
+                userActivity.showSoftInput(fragmentRegisterViewBinding.textFieldUserRegisterPW.editText!!)
+                return
+            }
+
+            // 입력 요소 검사
+            if (textFieldUserRegisterStoreNameEditTextText.value?.isEmpty()!!) {
+                // 아이디 입력란에 에러 메시지 표시
+                fragmentRegisterViewBinding.textFieldUserRegisterStoreName.error = "이름을 입력해주세요"
+                userActivity.showSoftInput(fragmentRegisterViewBinding.textFieldUserRegisterStoreName.editText!!)
+                return
+            }
+
+            // 중복 확인
+            checkRegisterIdName()
+            // 다음 화면으로 이동
+            moveToUserVerification()
+        }
     }
 
     companion object{

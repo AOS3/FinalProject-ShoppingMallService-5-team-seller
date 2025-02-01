@@ -26,6 +26,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <ProgressBar
+            android:id="@+id/loadingIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            style="?android:attr/progressBarStyleLarge"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"/>
+
         <!-- ScrollView로 나머지 묶기 -->
         <ScrollView
             android:layout_width="0dp"
@@ -156,7 +167,7 @@
 
                 <!-- 대표 이미지 추가 버튼 -->
                 <Button
-                    android:id="@+id/buttonAddMainImage"
+                    android:id="@+id/buttonModifyMainImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="대표 이미지 추가"
@@ -169,7 +180,7 @@
                     android:id="@+id/recyclerViewMainImages"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/buttonAddMainImage"
+                    app:layout_constraintTop_toBottomOf="@id/buttonModifyMainImage"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     tools:listitem="@layout/item_image_setting" />
@@ -187,7 +198,7 @@
 
                 <!-- 추가 이미지 추가 버튼 -->
                 <Button
-                    android:id="@+id/buttonAddAdditionalImage"
+                    android:id="@+id/buttonModifyAdditionalImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="추가 이미지 추가"
@@ -201,7 +212,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:scrollbars="horizontal"
-                    app:layout_constraintTop_toBottomOf="@id/buttonAddAdditionalImage"
+                    app:layout_constraintTop_toBottomOf="@id/buttonModifyAdditionalImage"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     tools:listitem="@layout/item_additional_image_setting" />

@@ -1,19 +1,20 @@
 package com.lion.judamie_seller.service
 
 import android.net.Uri
+import android.util.Log
+import com.lion.judamie_seller.model.OrderModel
 import com.lion.judamie_seller.model.ProductModel
 import com.lion.judamie_seller.repository.SellerRepository
 import com.lion.judamie_seller.repository.SellerRepository.Companion.gettingImage
-import com.lion.judamie_seller.repository.UserRepository
 import com.lion.judamie_seller.util.ProductType
-import com.lion.judamie_seller.util.SellerFragmentType
+import com.lion.judamie_seller.vo.OrderVO
 import com.lion.judamie_seller.vo.ProductVO
 import com.lion.judamie_seller.vo.UserVO
 
 class SellerService {
     companion object {
-        suspend fun uploadImage(sourceFilePath:String, serverFilePath:String){
-            SellerRepository.uploadImage(sourceFilePath, serverFilePath)
+        suspend fun uploadImage(sourceFilePath:String, serverFilePath:String, isMainImage: Boolean){
+            SellerRepository.uploadImage(sourceFilePath, serverFilePath, isMainImage)
         }
 
         suspend fun addProductData(productModel: ProductModel): String {
@@ -36,8 +37,25 @@ class SellerService {
                 val productModel = productVO.toProductModel(documentId)
                 productList.add(productModel)
             }
+             Log.d("test100", " ${resultList.size} 카테고리 항목: ${productType.str}")
 
             return productList
+        }
+
+        // 상품 목록을 가져오는 메서드
+        suspend fun gettingOrderList(productType: ProductType) : MutableList<OrderModel>{
+            // 글정보를 가져온다.
+            val orderList = mutableListOf<OrderModel>()
+            val resultList = SellerRepository.gettingOrderList(productType)
+
+            resultList.forEach {
+                val orderVO = it["orderVO"] as OrderVO
+                val documentId = it["documentId"] as String
+                val orderModel = orderVO.toOrderModel(documentId)
+                orderList.add(orderModel)
+            }
+
+            return orderList
         }
 
         // 글정보를 수정하는 메서드
@@ -51,6 +69,10 @@ class SellerService {
         // 서버에서 이미지 파일을 삭제한다.
         suspend fun removeImageFile(imageFileName:String){
             SellerRepository.removeImageFile(imageFileName)
+        }
+
+        suspend fun removeImageFiles(imageFileNames: List<String>) {
+            SellerRepository.removeImageFiles(imageFileNames)
         }
 
         // 서버에서 글을 삭제한다.
@@ -70,13 +92,13 @@ class SellerService {
 
         // 이미지 데이터를 가져온다.
         suspend fun gettingMainImage(imageFileName:String) : Uri {
-            val imageUri = SellerRepository.gettingImage(imageFileName)
+            val imageUri = SellerRepository.gettingImage(imageFileName, true)
             return imageUri
         }
 
         suspend fun gettingSubImages(imageFileNames: List<String>): List<Uri> {
             return imageFileNames.map { imageFileName ->
-                gettingImage(imageFileName) // 개별 이미지를 처리
+                gettingImage(imageFileName, false) // 개별 이미지를 처리
             }
         }
     }

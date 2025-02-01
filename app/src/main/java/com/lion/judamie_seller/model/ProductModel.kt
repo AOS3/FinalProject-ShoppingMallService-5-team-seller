@@ -4,7 +4,6 @@ import com.lion.judamie_seller.util.ProductState
 import com.lion.judamie_seller.vo.ProductVO
 
 class ProductModel {
-    var productDocumentIdD = ""
     var productDocumentId = ""
     var productName	= ""
     var productCategory = ""
@@ -17,6 +16,8 @@ class ProductModel {
     var productState = ProductState.PRODUCT_STATE_NORMAL
     var productRegisterDate	= ""
     var productTimeStamp = 0L
+    var productReview = mutableListOf<String>()
+    var productSeller = ""
 
     fun toProductVO() : ProductVO {
         val productVO = ProductVO()
@@ -31,6 +32,8 @@ class ProductModel {
         productVO.productState = productState.number
         productVO.productRegisterDate = productRegisterDate
         productVO.productTimeStamp = productTimeStamp
+        productVO.productReview = productReview
+        productVO.productSeller = productSeller
 
         return productVO
     }

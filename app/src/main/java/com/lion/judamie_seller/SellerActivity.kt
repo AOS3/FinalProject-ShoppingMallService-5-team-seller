@@ -2,14 +2,21 @@ package com.lion.judamie_seller
 
 import android.content.DialogInterface
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
+import android.provider.MediaStore
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -19,7 +26,7 @@ import androidx.fragment.app.commit
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.transition.MaterialSharedAxis
-import com.lion.judamie_seller.databinding.ActivitySellerBinding
+import com.lion.judamie_seller.adapter.ImageSettingAdapter
 import com.lion.judamie_seller.fragment.AddProductFragment
 import com.lion.judamie_seller.fragment.MainFragment
 import com.lion.judamie_seller.fragment.ModifyInfoFragment
@@ -37,16 +44,17 @@ import kotlin.concurrent.thread
 
 
 class SellerActivity : AppCompatActivity() {
-
-    lateinit var activitySellerBinding: ActivitySellerBinding
-
-
     // 현재 Fragment와 다음 Fragment를 담을 변수(애니메이션 이동 때문에...)
     var newFragment: Fragment? = null
     var oldFragment: Fragment? = null
 
     // 촬영된 사진이 위치할 경로
     lateinit var filePath: String
+
+    lateinit var albumLauncher: ActivityResultLauncher<PickVisualMediaRequest>
+
+    // 카메라나 앨범을 사용하는 Fragment를 받을 변수
+    var pictureFragment:Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,8 +66,11 @@ class SellerActivity : AppCompatActivity() {
             insets
         }
         filePath = getExternalFilesDir(null).toString()
+
+        val dataBundle = intent.extras
+
         // 첫 프래그먼트를 보여준다.
-        replaceFragment(SellerFragmentType.SELLER_TYPE_MAIN, false, false, null)
+        replaceFragment(SellerFragmentType.SELLER_TYPE_MAIN, false, false, dataBundle)
     }
 
     // 프래그먼트를 교체하는 함수
@@ -84,8 +95,6 @@ class SellerActivity : AppCompatActivity() {
             SellerFragmentType.SELLER_TYPE_ADD_PRODUCT -> AddProductFragment()
 
             SellerFragmentType.SELLER_TYPE_MODIFY_PRODUCT -> ModifyProductFragment()
-
-            SellerFragmentType.SELLER_TYPE_SHOW_ONE_PRODUCT_DETAIL -> ShowOneProductDetailFragment()
 
             SellerFragmentType.SELLER_TYPE_DETAIL_PRODUCT -> ShowOneProductDetailFragment()
 
@@ -156,6 +165,17 @@ class SellerActivity : AppCompatActivity() {
         saveImageView(imageView, "UploadMain")
     }
 
+    // 이미지의 사이즈를 줄이는 메서드
+    fun resizeBitmap(targetWidth:Int, bitmap:Bitmap):Bitmap{
+        // 이미지의 축소/확대 비율을 구한다.
+        val ratio = targetWidth.toDouble() / bitmap.width.toDouble()
+        // 세로 길이를 구한다.
+        val targetHeight = (bitmap.height.toDouble() * ratio).toInt()
+        // 크기를 조절한 Bitmap 객체를 생성한다.
+        val result = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false)
+        return result
+    }
+
     fun saveSubImageViews(imageViews: List<ImageView>) {
         // ImageView 리스트 전체를 순회
         imageViews.forEachIndexed { index, imageView ->
@@ -167,6 +187,32 @@ class SellerActivity : AppCompatActivity() {
             if (bitmap != null) {
                 // 고유한 파일 이름 생성 (이미지 인덱스를 붙여서 저장)
                 val fileName = "UploadSub_$index.jpg"
+                val file = File("$filePath/$fileName")
+
+                // 파일로 저장
+                try {
+                    val fileOutputStream = FileOutputStream(file)
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream)
+                    fileOutputStream.flush()
+                    fileOutputStream.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    fun saveModifySubImageViews(imageViews: List<ImageView>, prevListSize: Int) {
+        // ImageView 리스트 전체를 순회
+        imageViews.forEachIndexed { index, imageView ->
+            // 이미지 데이터를 추출
+            val bitmapDrawable = imageView.drawable as? BitmapDrawable
+            val bitmap = bitmapDrawable?.bitmap
+
+            // 만약 비트맵이 null이라면 저장을 건너뛰기
+            if (bitmap != null) {
+                // 고유한 파일 이름 생성 (이미지 인덱스를 붙여서 저장)
+                val fileName = "UploadSub_${prevListSize - 1 + index}.jpg"
                 val file = File("$filePath/$fileName")
 
                 // 파일로 저장

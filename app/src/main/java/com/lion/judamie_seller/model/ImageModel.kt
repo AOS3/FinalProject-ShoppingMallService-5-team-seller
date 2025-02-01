@@ -1,3 +1,5 @@
 package com.lion.judamie_seller.model
 
-data class ImageData(val imageUrl: String?, val isMainImage: Boolean, val isDefault: Boolean)
+import android.graphics.Bitmap
+
+data class ImageData(val imageUrl: String?, val isMainImage: Boolean, val isDefault: Boolean, var imageBitmap: Bitmap? = null)

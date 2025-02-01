@@ -51,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:hint="휴대폰 번호"
                     app:errorEnabled="true"
-                    app:error="@{registerVerificationViewModel.phoneNumberError}">
+                    tools:endIconMode="clear_text">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editTextUserRegisterPhoneNumber"
@@ -70,7 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:onClick="@{(view) -> registerVerificationViewModel.buttonUserVerificationRequestOnClick()}"
+                    android:onClick="@{(view) -> registerVerificationViewModel.buttonRegisterVerificationRequestVerificationOnClick()}"
                     android:text="인증 요청"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
@@ -82,7 +82,7 @@
                     app:endIconMode="clear_text"
                     android:layout_marginTop="16dp"
                     app:errorEnabled="true"
-                    app:error="@{registerVerificationViewModel.verificationNumberError}">>
+                    tools:endIconMode="clear_text">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editTextUserVerificationNumber"
@@ -101,9 +101,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:onClick="@{(view) -> registerVerificationViewModel.buttonUserVerificationConfirmOnClick()}"
                     android:text="인증 확인"
-                    android:enabled="@{registerVerificationViewModel.isVerificationConfirmButtonEnabled}"
+                    android:onClick="@{registerVerificationViewModel.buttonRegisterVerificationCheckInfoOnClick}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large" />
             </LinearLayout>
         </ScrollView>
@@ -118,8 +117,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:enabled="@{registerVerificationViewModel.isRegisterCompleteButtonEnabled}"
-            android:onClick="@{(view) -> registerVerificationViewModel.buttonUserRegisterCompleteOnClick()}" />
+            android:onClick="@{registerVerificationViewModel.buttonUserRegisterCompleteOnClick}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -5,29 +5,37 @@ import com.lion.judamie_seller.util.UserState
 
 class UserVO(){
     // 아이디
-    var userId = ""
+    var sellerId = ""
     // 비밀번호
-    var userPw = ""
+    var sellerPw = ""
     // 자동 로그인 토큰
-    var userAutoLoginToken = ""
+    var sellerAutoLoginToken = ""
 
+    var sellerPhoneNumber = ""
+
+    var sellerProducts = mutableListOf<String>()
+
+    var storeName = ""
     // 시간
-    var userTimeStamp:Long = 0
+    var sellerTimeStamp:Long = 0
     // 상태값
-    var userState = 0
+    var sellerState = 0
 
-    fun toUserModel(userDocumentId:String) : UserModel{
+    fun toUserModel(sellerDocumentId:String) : UserModel{
         val userModel = UserModel()
 
-        userModel.userDocumentId = userDocumentId
-        userModel.userId = userId
-        userModel.userPw = userPw
-        userModel.userAutoLoginToken = userAutoLoginToken
-        userModel.userTimeStamp = userTimeStamp
+        userModel.sellerDocumentId = sellerDocumentId
+        userModel.sellerId = sellerId
+        userModel.storeName = storeName
+        userModel.sellerPhoneNumber = sellerPhoneNumber
+        userModel.sellerProducts = sellerProducts
+        userModel.sellerPw = sellerPw
+        userModel.sellerAutoLoginToken = sellerAutoLoginToken
+        userModel.sellerTimeStamp = sellerTimeStamp
 
-        when(userState){
-            UserState.USER_STATE_NORMAL.number -> userModel.userState = UserState.USER_STATE_NORMAL
-            UserState.USER_STATE_SIGNOUT.number -> userModel.userState = UserState.USER_STATE_SIGNOUT
+        when(sellerState){
+            UserState.USER_STATE_NORMAL.number -> userModel.sellerState = UserState.USER_STATE_NORMAL
+            UserState.USER_STATE_SIGNOUT.number -> userModel.sellerState = UserState.USER_STATE_SIGNOUT
         }
 
         return userModel
