@@ -63,3 +63,33 @@ enum class LoginResult(val number:Int, val str:String){
     LOGIN_RESULT_PASSWORD_INCORRECT(3, "잘못된 비밀번호"),
     LOGIN_RESULT_SIGNOUT_MEMBER(4, "탈퇴한 회원"),
 }
+
+// 사용자 상태 값
+enum class CustomerState(val number:Int, val str:String){
+    // 정상
+    USER_STATE_NORMAL(1, "정상"),
+    // 탈퇴
+    USER_STATE_SIGN_OUT(2, "탈퇴")
+}
+
+// 주문 상태(OrderData)
+enum class OrderState(val num:Int,var str:String) {
+    ORDER_STATE_PAYMENT_COMPLETE(1, "주문 완료"),
+    ORDER_STATE_DELIVERY(2, "배송 완료"),
+    ORDER_STATE_PICKUP_COMPLETED(3, "픽업 완료"),
+    ORDER_STATE_TRANSFER_COMPLETED(4, "입금 처리 완료")
+}
+
+// 주문 Package 상태 (OrderPackage)
+enum class OrderPackageState(val num:Int,var str:String) {
+    ORDER_PACKAGE_STATE_ENABLE(1,"활성화"),
+    ORDER_PACKAGE_STATE_DISABLE(2,"비활성화")
+}
+
+// 픽업지 상태를 나타내는 값
+enum class PickupStateType(var num:Int, var str: String){
+    // 기본
+    PICKUP_STATE_NORMAL(1, "정상"),
+    // 삭제
+    PICKUP_STATE_DELETE(2, "삭제")
+}

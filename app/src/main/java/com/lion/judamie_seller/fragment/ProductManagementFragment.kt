@@ -104,7 +104,7 @@ class ProductManagementFragment() : Fragment() {
         // position번째에서 사용할 Fragment 객체를 생성해 반환하는 메서드
         override fun createFragment(position: Int): Fragment {
             val dataBundle = Bundle().apply {
-                putString("categoryName", categories[position].str) // ✅ 카테고리 이름 전달
+                putString("categoryName", categories[position].str)
                 putInt("ProductType", categories[position].number)
                 putString("sellerStoreName", productViewModel.sellerStoreName)
                 putString("sellerDocumentId", productViewModel.sellerDocumentId)

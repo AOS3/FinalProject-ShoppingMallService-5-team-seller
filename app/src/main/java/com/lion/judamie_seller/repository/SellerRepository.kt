@@ -5,8 +5,12 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
+import com.lion.judamie_seller.model.CustomerModel
 import com.lion.judamie_seller.util.ProductType
+import com.lion.judamie_seller.vo.CustomerVO
+import com.lion.judamie_seller.vo.OrderPackageVO
 import com.lion.judamie_seller.vo.OrderVO
+import com.lion.judamie_seller.vo.PickupLocationVO
 import com.lion.judamie_seller.vo.ProductVO
 import kotlinx.coroutines.tasks.await
 import java.io.File
@@ -29,7 +33,7 @@ class SellerRepository {
         // 새롭게 추가된 문서의 id를 반환한다.
         suspend fun addProductData(productVO: ProductVO): String {
             val fireStore = FirebaseFirestore.getInstance()
-            val collectionReference = fireStore.collection("ProductData")
+            val collectionReference = fireStore.collection("productData")
             val documentReference = collectionReference.add(productVO).await()
             return documentReference.id
         }
@@ -37,7 +41,7 @@ class SellerRepository {
         // 글 목록을 가져오는 메서드
         suspend fun gettingProductList(productType: ProductType) : MutableList<Map<String, *>>{
             val firestore = FirebaseFirestore.getInstance()
-            val collectionReference = firestore.collection("ProductData")
+            val collectionReference = firestore.collection("productData")
             // 데이터를 가져온다.
             val result = if(productType == ProductType.PRODUCT_TYPE_ALL){
                 collectionReference.orderBy("productTimeStamp", Query.Direction.DESCENDING).get().await()
@@ -86,10 +90,31 @@ class SellerRepository {
             return resultList
         }
 
+        // 글 목록을 가져오는 메서드
+        suspend fun gettingCustomerList() : MutableList<Map<String, *>>{
+            val firestore = FirebaseFirestore.getInstance()
+            val collectionReference = firestore.collection("UserData")
+            // 데이터를 가져온다.
+            val result = collectionReference.orderBy("userTimeStamp", Query.Direction.DESCENDING).get().await()
+            // 반환할 리스트
+            val resultList = mutableListOf<Map<String, *>>()
+            // 데이터의 수 만큼 반환한다.
+            result.forEach {
+                val map = mapOf(
+                    // 문서의 id
+                    "documentId" to it.id,
+                    // 데이터를 가지고 있는 객체
+                    "CustomerVO" to it.toObject(CustomerVO::class.java)
+                )
+                resultList.add(map)
+            }
+            return resultList
+        }
+
         // 글정보를 수정하는 메서드
         suspend fun updateProductData(productVO: ProductVO, productDocumentId:String){
             val firestore = FirebaseFirestore.getInstance()
-            val collectionReference = firestore.collection("ProductData")
+            val collectionReference = firestore.collection("productData")
             val documentReference = collectionReference.document(productDocumentId)
 
             // 수정할 데이터를 맵에 담는다
@@ -125,7 +150,7 @@ class SellerRepository {
         // 서버에서 글을 삭제한다.
         suspend fun deleteProductData(productDocumentId:String){
             val firestore = FirebaseFirestore.getInstance()
-            val collectionReference = firestore.collection("ProductData")
+            val collectionReference = firestore.collection("productData")
             val documentReference = collectionReference.document(productDocumentId)
             documentReference.delete().await()
         }
@@ -133,11 +158,41 @@ class SellerRepository {
         // 글의 문서 id를 통해 글 데이터를 가져온다.
         suspend fun selectProductDataOneById(documentId:String) : ProductVO{
             val firestore = FirebaseFirestore.getInstance()
-            val collectionReference = firestore.collection("ProductData")
+            val collectionReference = firestore.collection("productData")
             val documentReference = collectionReference.document(documentId)
             val documentSnapShot = documentReference.get().await()
             val productVO = documentSnapShot.toObject(ProductVO::class.java)!!
             return productVO
+        }
+
+        // 글의 문서 id를 통해 글 데이터를 가져온다.
+        suspend fun selectOrderDataOneById(documentId:String) : OrderVO{
+            val firestore = FirebaseFirestore.getInstance()
+            val collectionReference = firestore.collection("OrderData")
+            val documentReference = collectionReference.document(documentId)
+            val documentSnapShot = documentReference.get().await()
+            val orderVO = documentSnapShot.toObject(OrderVO::class.java)!!
+            return orderVO
+        }
+
+        // 글의 문서 id를 통해 글 데이터를 가져온다.
+        suspend fun selectCustomerDataOneById(documentId:String) : CustomerVO {
+            val firestore = FirebaseFirestore.getInstance()
+            val collectionReference = firestore.collection("UserData")
+            val documentReference = collectionReference.document(documentId)
+            val documentSnapShot = documentReference.get().await()
+            val customerVO = documentSnapShot.toObject(CustomerVO::class.java)!!
+            return customerVO
+        }
+
+        // 글의 문서 id를 통해 글 데이터를 가져온다.
+        suspend fun selectPickupLocDataOneById(documentId:String) : PickupLocationVO {
+            val firestore = FirebaseFirestore.getInstance()
+            val collectionReference = firestore.collection("PickupLocationData")
+            val documentReference = collectionReference.document(documentId)
+            val documentSnapShot = documentReference.get().await()
+            val pickupLocVO = documentSnapShot.toObject(PickupLocationVO::class.java)!!
+            return pickupLocVO
         }
 
         // 이미지 데이터를 가져온다.

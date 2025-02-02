@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
@@ -16,6 +17,7 @@ import com.lion.judamie_seller.databinding.FragmentOrderListBinding
 import com.lion.judamie_seller.util.ProductType
 import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.viewmodel.OrderListViewModel
+import com.lion.judamie_seller.viewmodel.rowviewmodel.productViewModel
 
 class OrderListFragment() : Fragment() {
 
@@ -23,6 +25,8 @@ class OrderListFragment() : Fragment() {
     lateinit var sellerActivity: SellerActivity
 
     private val categories = ProductType.values()
+
+    private val productViewModel: productViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,11 +66,14 @@ class OrderListFragment() : Fragment() {
 
         // position번째에서 사용할 Fragment 객체를 생성해 반환하는 메서드
         override fun createFragment(position: Int): Fragment {
-            // 카테고리 정보 전달
-            return OrderCategoryFragment.newInstance(categories[position].str).apply {
-                arguments = Bundle().apply {
-                    putInt("ProductType", categories[position].number) // 전달할 ProductType 추가
-                }
+            val dataBundle = Bundle().apply {
+                putString("categoryName", categories[position].str)
+                putInt("ProductType", categories[position].number)
+                putString("sellerDocumentId", productViewModel.sellerDocumentId)
+            }
+
+            return OrderCategoryFragment().apply {
+                arguments = dataBundle
             }
         }
     }

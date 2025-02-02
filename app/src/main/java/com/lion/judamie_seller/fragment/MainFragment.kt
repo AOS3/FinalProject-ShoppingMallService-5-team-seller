@@ -47,7 +47,7 @@ class MainFragment : Fragment() {
         sellerDocumentId = args?.getString("seller_document_id")!!
     }
 
-    // 회원 가입 화면으로 이동시키는 메서드
+    // 상품 관리 화면으로 이동시키는 메서드
     fun moveToProductManagement() {
         // 데이터를 담는다.
         val dataBundle = Bundle()
@@ -61,7 +61,7 @@ class MainFragment : Fragment() {
         )
     }
 
-    // 회원 가입 화면으로 이동시키는 메서드
+    // 주문 내역 화면으로 이동시키는 메서드
     fun moveToOrderList(){
         // 데이터를 담는다.
         val dataBundle = Bundle()
@@ -70,7 +70,7 @@ class MainFragment : Fragment() {
         sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_ORDER_LIST, true, true, dataBundle)
     }
 
-    // 회원 가입 화면으로 이동시키는 메서드
+    // 거래 내역 화면으로 이동시키는 메서드
     fun moveToSalesList(){
         // 데이터를 담는다.
         val dataBundle = Bundle()
@@ -79,7 +79,7 @@ class MainFragment : Fragment() {
         sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_SALES_LIST, true, true, dataBundle)
     }
 
-    // 회원 가입 화면으로 이동시키는 메서드
+    // 개인 정보 변경 화면으로 이동시키는 메서드
     fun moveToModifyInfo(){
         // 데이터를 담는다.
         val dataBundle = Bundle()
