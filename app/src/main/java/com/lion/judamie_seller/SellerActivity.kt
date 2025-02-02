@@ -32,6 +32,7 @@ import com.lion.judamie_seller.fragment.MainFragment
 import com.lion.judamie_seller.fragment.ModifyInfoFragment
 import com.lion.judamie_seller.fragment.ModifyProductFragment
 import com.lion.judamie_seller.fragment.OrderListFragment
+import com.lion.judamie_seller.fragment.ProcessingOrderFragment
 import com.lion.judamie_seller.fragment.ProductManagementFragment
 import com.lion.judamie_seller.fragment.SalesListFragment
 import com.lion.judamie_seller.fragment.ShowOneProductDetailFragment
@@ -50,11 +51,6 @@ class SellerActivity : AppCompatActivity() {
 
     // 촬영된 사진이 위치할 경로
     lateinit var filePath: String
-
-    lateinit var albumLauncher: ActivityResultLauncher<PickVisualMediaRequest>
-
-    // 카메라나 앨범을 사용하는 Fragment를 받을 변수
-    var pictureFragment:Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,7 +94,7 @@ class SellerActivity : AppCompatActivity() {
 
             SellerFragmentType.SELLER_TYPE_DETAIL_PRODUCT -> ShowOneProductDetailFragment()
 
-            SellerFragmentType.SELLER_TYPE_DETAIL_ORDER -> OrderListFragment()
+            SellerFragmentType.SELLER_TYPE_DETAIL_ORDER -> ProcessingOrderFragment()
 
             SellerFragmentType.SELLER_TYPE_DETAIL_SALES -> ShowOneSalesDetailFragment()
         }
@@ -245,14 +241,5 @@ class SellerActivity : AppCompatActivity() {
     // 서버에 있는 이미지를 가져와 ImageView에 보여준다.
     fun showServiceMainImage(imageUri: Uri, imageView: ImageView){
         Glide.with(this@SellerActivity).load(imageUri).into(imageView)
-    }
-
-    fun showServiceSubImages(imageUris: List<Uri>, imageView: ImageView) {
-        // 이미지 리스트를 순차적으로 Glide로 처리
-        for (uri in imageUris) {
-            Glide.with(this@SellerActivity)
-                .load(uri)
-                .into(imageView)
-        }
     }
 }

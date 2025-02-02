@@ -1,6 +1,7 @@
 package com.lion.judamie_seller.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,15 +14,12 @@ import com.lion.judamie_seller.R
 import com.lion.judamie_seller.SellerActivity
 import com.lion.judamie_seller.databinding.FragmentOrderCategoryBinding
 import com.lion.judamie_seller.databinding.RowOrderCategoryListBinding
-import com.lion.judamie_seller.databinding.RowProductCategoryListBinding
 import com.lion.judamie_seller.model.OrderModel
-import com.lion.judamie_seller.model.ProductModel
 import com.lion.judamie_seller.service.SellerService
 import com.lion.judamie_seller.util.ProductType
 import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.viewmodel.OrderCategoryViewModel
 import com.lion.judamie_seller.viewmodel.rowviewmodel.RowOrderCategoryListViewModel
-import com.lion.judamie_seller.viewmodel.rowviewmodel.RowProductCategoryListViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -33,22 +31,11 @@ class OrderCategoryFragment : Fragment() {
     lateinit var fragmentOrderCategoryBinding: FragmentOrderCategoryBinding
     lateinit var sellerActivity: SellerActivity
 
-    var categoryName: String? = null
     lateinit var productType: ProductType
 
     var recyclerViewList = mutableListOf<OrderModel>()
 
-    companion object {
-        private const val ARG_CATEGORY_NAME = "categoryName"
-
-        fun newInstance(categoryName: String): OrderCategoryFragment {
-            val fragment = OrderCategoryFragment()
-            val args = Bundle()
-            args.putString(ARG_CATEGORY_NAME, categoryName)
-            fragment.arguments = args
-            return fragment
-        }
-    }
+    var sellerDocumentId: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,11 +49,12 @@ class OrderCategoryFragment : Fragment() {
 
         sellerActivity = activity as SellerActivity
 
+        sellerDocumentId = arguments?.getString("sellerDocumentId")
+
         recyclerViewList.clear()
 
-        categoryName = arguments?.getString(ARG_CATEGORY_NAME)
-
-        settingProductType()
+        val productTypeNumber = arguments?.getInt("ProductType") ?: ProductType.PRODUCT_TYPE_ALL.number
+        productType = ProductType.values().first { it.number == productTypeNumber }
 
         settingRecyclerView()
 
@@ -97,54 +85,10 @@ class OrderCategoryFragment : Fragment() {
                 SellerService.gettingOrderList(productType)
             }
             recyclerViewList = work1.await()
+                .filter { it.sellerDocumentId == sellerDocumentId }.toMutableList()
 
             // RecyclerView 업데이트
             fragmentOrderCategoryBinding.recyclerviewCategoryList.adapter?.notifyDataSetChanged()
-        }
-    }
-
-    // 게시판 타입 값을 담는 메서드
-    fun settingProductType(){
-        when(productType.number){
-            ProductType.PRODUCT_TYPE_ALL.number -> {
-                productType = ProductType.PRODUCT_TYPE_ALL
-            }
-            ProductType.PRODUCT_TYPE_WINE.number -> {
-                productType = ProductType.PRODUCT_TYPE_WINE
-            }
-            ProductType.PRODUCT_TYPE_WHISKEY.number -> {
-                productType = ProductType.PRODUCT_TYPE_WHISKEY
-            }
-            ProductType.PRODUCT_TYPE_VODKA.number -> {
-                productType = ProductType.PRODUCT_TYPE_VODKA
-            }
-            ProductType.PRODUCT_TYPE_TEQUILA.number -> {
-                productType = ProductType.PRODUCT_TYPE_TEQUILA
-            }
-            ProductType.PRODUCT_TYPE_DOMESTIC.number -> {
-                productType = ProductType.PRODUCT_TYPE_DOMESTIC
-            }
-            ProductType.PRODUCT_TYPE_SAKE.number -> {
-                productType = ProductType.PRODUCT_TYPE_SAKE
-            }
-            ProductType.PRODUCT_TYPE_RUM.number -> {
-                productType = ProductType.PRODUCT_TYPE_RUM
-            }
-            ProductType.PRODUCT_TYPE_LIQUEUR.number -> {
-                productType = ProductType.PRODUCT_TYPE_LIQUEUR
-            }
-            ProductType.PRODUCT_TYPE_CHINESE.number -> {
-                productType = ProductType.PRODUCT_TYPE_CHINESE
-            }
-            ProductType.PRODUCT_TYPE_BRANDY.number -> {
-                productType = ProductType.PRODUCT_TYPE_BRANDY
-            }
-            ProductType.PRODUCT_TYPE_BEER.number -> {
-                productType = ProductType.PRODUCT_TYPE_BEER
-            }
-            ProductType.PRODUCT_TYPE_NON_ALCOHOL.number -> {
-                productType = ProductType.PRODUCT_TYPE_NON_ALCOHOL
-            }
         }
     }
 
@@ -170,7 +114,10 @@ class OrderCategoryFragment : Fragment() {
             // 리사이클러뷰 항목 클릭 시 상세 화면으로 이동
             rowCategoryListBinding.root.setOnClickListener {
                 val dataBundle = Bundle()
-                dataBundle.putString("orderDocumentId", recyclerViewList[mainViewHolder.adapterPosition].orderDocumentID)
+                dataBundle.putString("orderDocumentId", recyclerViewList[mainViewHolder.adapterPosition].orderDocumentId)
+                dataBundle.putString("customerDocumentId", recyclerViewList[mainViewHolder.adapterPosition].userDocumentId)
+                dataBundle.putString("productDocumentId", recyclerViewList[mainViewHolder.adapterPosition].productDocumentId)
+                dataBundle.putString("pickupLocDocumentId", recyclerViewList[mainViewHolder.adapterPosition].pickupLocDocumentId)
                 sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_DETAIL_ORDER, true, true, dataBundle)
             }
 
@@ -184,7 +131,7 @@ class OrderCategoryFragment : Fragment() {
         override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
             holder.rowOrderCategoryViewBinding.rowOrderCategoryListViewModel?.apply {
                 // 여기서 productName을 텍스트 뷰에 바인딩
-                textViewOrderListCategoryList?.value = "$position" // productName을 표시
+                textViewOrderListCategoryList?.value = "주문${position+1}" // productName을 표시
             }
         }
     }

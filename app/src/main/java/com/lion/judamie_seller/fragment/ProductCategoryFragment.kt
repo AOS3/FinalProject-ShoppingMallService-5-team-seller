@@ -33,9 +33,9 @@ class ProductCategoryFragment : Fragment() {
     lateinit var sellerActivity: SellerActivity
 
     var categoryName: String? = null
+    var sellerStoreName: String? = null
     lateinit var productType: ProductType
 
-    private val productViewModel: productViewModel by activityViewModels()
 
     var recyclerViewList = mutableListOf<ProductModel>()
 
@@ -55,6 +55,7 @@ class ProductCategoryFragment : Fragment() {
         productType = ProductType.values().first { it.number == productTypeNumber }
 
         categoryName = arguments?.getString("categoryName") ?: "전체"
+        sellerStoreName = arguments?.getString("sellerStoreName")
 
         settingRecyclerView()
 
@@ -86,6 +87,7 @@ class ProductCategoryFragment : Fragment() {
                 SellerService.gettingProductList(productType)
             }
             recyclerViewList = work1.await()
+                .filter { it.productSeller == sellerStoreName }.toMutableList()
 
             // RecyclerView 업데이트
             fragmentCategoryBinding.recyclerviewCategoryList.adapter?.notifyDataSetChanged()
