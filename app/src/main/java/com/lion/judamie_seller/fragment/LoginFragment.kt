@@ -89,14 +89,14 @@ class LoginFragment : Fragment() {
             // 사용자가 입력한 아이디와 비밀번호
             val loginUserId = loginViewModel?.textFieldUserLoginIdEditTextText?.value!!
             val loginUserPw = loginViewModel?.textFieldUserLoginPwEditTextText?.value!!
-
+            Log.d("userDocumentId5", loginUserPw)
+            Log.d("userDocumentId6", loginUserId)
             CoroutineScope(Dispatchers.Main).launch {
                 val work1 = async(Dispatchers.IO) {
                     UserService.checkLogin(loginUserId, loginUserPw)
                 }
                 // 로그인 결과를 가져온다.
                 val loginResult = work1.await()
-                // Log.d("test100", loginResult.str)
 
                 // 로그인 결과로 분기
                 when (loginResult) {
@@ -142,8 +142,10 @@ class LoginFragment : Fragment() {
 
                         // LoginActivity 종료, ShopActivity 실행
                         val shopIntent = Intent(userActivity, SellerActivity::class.java)
-                        shopIntent.putExtra("seller_document_id", loginUserModel.sellerDocumentId)
-                        shopIntent.putExtra("seller_store_name", loginUserModel.storeName)
+                        shopIntent.putExtra("sellerDocumentId", loginUserModel.sellerDocumentId)
+                        shopIntent.putExtra("sellerStoreName", loginUserModel.storeName)
+                        shopIntent.putExtra("sellerPw", loginUserPw)
+                        Log.d("userDocumentId4","${loginUserPw}")
                         startActivity(shopIntent)
                         userActivity.finish()
                     }

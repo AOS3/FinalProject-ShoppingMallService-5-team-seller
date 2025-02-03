@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -181,10 +182,11 @@ class UserActivity : AppCompatActivity() {
                     val productIntent = Intent(this@UserActivity, SellerActivity::class.java)
                     productIntent.putExtra("sellerDocumentId", loginUserModel.sellerDocumentId)
                     productIntent.putExtra("sellerStoreName", loginUserModel.storeName)
+                    productIntent.putExtra("sellerPw", loginUserModel.sellerPw)
+                    Log.d("userDocumentId3","${loginUserModel.sellerPw}")
                     startActivity(productIntent)
                     finish()
                 } else {
-                    // 첫번째 Fragment를 설정한다.
                     replaceFragment(UserFragmentName.USER_LOGIN_FRAGMENT, false, false, null)
                 }
             } else {

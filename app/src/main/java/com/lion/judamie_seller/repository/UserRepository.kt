@@ -1,5 +1,6 @@
 package com.lion.judamie_seller.repository
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.lion.judamie_seller.vo.UserVO
 import kotlinx.coroutines.tasks.await
@@ -72,6 +73,16 @@ class UserRepository {
             val documentReference = collectionReference.document(userDocumentId)
             val tokenMap = mapOf(
                 "sellerAutoLoginToken" to newToken
+            )
+            documentReference.update(tokenMap).await()
+        }
+
+        suspend fun updateUserPwData(userDocumentId: String, userPw: String){
+            val firestore = FirebaseFirestore.getInstance()
+            val collectionReference = firestore.collection("SellerData")
+            val documentReference = collectionReference.document(userDocumentId)
+            val tokenMap = mapOf(
+                "sellerPw" to userPw
             )
             documentReference.update(tokenMap).await()
         }

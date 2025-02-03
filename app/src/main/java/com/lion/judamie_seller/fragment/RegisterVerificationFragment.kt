@@ -44,9 +44,6 @@ class RegisterVerificationFragment : Fragment() {
     lateinit var storeName:String
 
 
-    // 닉네임 중복 확인을 했는지 확인하기 위한 변수
-    var isCheckUserNickExist = false
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -175,7 +172,6 @@ class RegisterVerificationFragment : Fragment() {
                 }
             } else {
                 userActivity.showMessageDialog("가입 실패", "인증을 완료해주세요", "확인") {
-
                 }
             }
         }
