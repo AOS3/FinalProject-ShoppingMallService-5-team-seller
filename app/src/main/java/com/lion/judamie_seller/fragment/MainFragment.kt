@@ -21,6 +21,7 @@ class MainFragment : Fragment() {
 
     private lateinit var sellerStoreName: String
     private lateinit var sellerDocumentId: String
+    private lateinit var sellerPw: String
 
 
     override fun onCreateView(
@@ -46,6 +47,7 @@ class MainFragment : Fragment() {
         val args = arguments
         sellerStoreName = args?.getString("sellerStoreName")!!
         sellerDocumentId = args?.getString("sellerDocumentId")!!
+        sellerPw = args?.getString("sellerPw")!!
     }
 
     // 상품 관리 화면으로 이동시키는 메서드
@@ -86,6 +88,7 @@ class MainFragment : Fragment() {
         val dataBundle = Bundle()
         dataBundle.putString("sellerDocumentId", sellerDocumentId)
         dataBundle.putString("sellerStoreName", sellerStoreName)
+        dataBundle.putString("sellerPw", sellerStoreName)
         sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_INFO, true, true, dataBundle)
     }
 

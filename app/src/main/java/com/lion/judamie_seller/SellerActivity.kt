@@ -53,6 +53,7 @@ class SellerActivity : AppCompatActivity() {
     lateinit var filePath: String
     var sellerDocumentId = ""
     var sellerStoreName = ""
+    var sellerPw = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +69,7 @@ class SellerActivity : AppCompatActivity() {
         dataBundle?.let {
             sellerDocumentId = it.getString("sellerDocumentId", "")
             sellerStoreName = it.getString("sellerStoreName", "")
+            sellerPw = it.getString("sellerPw", "")
         }
 
         // 첫 프래그먼트를 보여준다.

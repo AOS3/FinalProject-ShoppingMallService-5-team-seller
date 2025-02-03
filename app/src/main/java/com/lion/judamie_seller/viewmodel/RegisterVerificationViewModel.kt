@@ -19,8 +19,8 @@ class RegisterVerificationViewModel(val registerVerificationFragment: RegisterVe
 
     // 인증 요청 버튼
     // buttonRegisterVerificationRequestVerification - onClick
-    fun buttonRegisterVerificationRequestVerificationOnClick(){
-        val phoneNumber1 =textFieldUserRegisterPhoneNumberEditTextText.value
+    fun buttonRegisterVerificationRequestVerificationOnClick(view: View){
+        val phoneNumber1 = textFieldUserRegisterPhoneNumberEditTextText.value
         if (phoneNumber1.isNullOrEmpty()) {
             registerVerificationFragment.fragmentRegisterVerificationBinding.textFieldUserPhoneNumber.error = "전화번호를 입력해주세요"
         } else {

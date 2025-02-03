@@ -1,11 +1,11 @@
 package com.lion.judamie_seller.service
 
 import android.content.Context
+import android.util.Log
 import androidx.core.content.edit
 import com.lion.judamie_seller.model.UserModel
 import com.lion.judamie_seller.repository.UserRepository
 import com.lion.judamie_seller.util.LoginResult
-import com.lion.judamie_seller.util.UserState
 import com.lion.judamie_seller.vo.UserVO
 
 class UserService {
@@ -17,6 +17,19 @@ class UserService {
             val userVO = userModel.toUserVO()
             // 저장하는 메서드를 호출한다.
             UserRepository.addUserData(userVO)
+        }
+
+        suspend fun updateUserPwData(context: Context, userDocumentId:String, token: String) {
+            // 새로운 토큰 값 발행
+            val newToken = "$token"
+            // SharedPreference 에 저장
+            val pref = context.getSharedPreferences("LoginToken", Context.MODE_PRIVATE)
+            pref.edit {
+                putString("token", newToken)
+            }
+            Log.d("userDocumentId2", "$userDocumentId")
+            // 서버에 저장
+            UserRepository.updateUserPwData(userDocumentId, newToken)
         }
 
         // 사용자 아이디와 동일한 사용자의 정보 하나를 반환하는 메서드
