@@ -29,16 +29,19 @@ class ModifyInfoViewModel(val ModifyInfoFragment: ModifyInfoFragment) : ViewMode
         }
     }
 
-    // 인증 확인 버튼
+    // 인증 확인 버튼 클릭
     fun buttonVerificationCheckInfoOnClick(view: View) {
-        ModifyInfoFragment.verificationCheck()
+        if (ModifyInfoFragment.requestComplete) {
+            ModifyInfoFragment.verificationCheck()
+        }
     }
 
+    // 변경 완료 버튼 클릭
     fun buttonChangeCompleteOnClick(view: View) {
-        // 가입 완료 처리 메서드 호출
-        ModifyInfoFragment.proChange()
+        if (ModifyInfoFragment.requestComplete) {
+            ModifyInfoFragment.proChange()
+        }
     }
-
     companion object{
         @JvmStatic
         @BindingAdapter("onNavigationClickModifyInfo")

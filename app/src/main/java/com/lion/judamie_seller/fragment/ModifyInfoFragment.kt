@@ -38,6 +38,7 @@ class ModifyInfoFragment() : Fragment() {
     // 본인 인증 했는지 확인하는 변수
     var isVerification = false
 
+    var requestComplete = false
     // 번들로 전달된 데이터를 담을 변수
     lateinit var sellerId:String
     lateinit var sellerPw:String
@@ -72,6 +73,7 @@ class ModifyInfoFragment() : Fragment() {
         val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
                 signInWithPhoneAuthCredential(credential)
+                requestComplete = true
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
@@ -81,14 +83,15 @@ class ModifyInfoFragment() : Fragment() {
             override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
                 this@ModifyInfoFragment.verificationId = verificationId
                 Toast.makeText(requireContext(), "인증 코드가 전송되었습니다.", Toast.LENGTH_SHORT).show()
+                requestComplete = true // 코드가 성공적으로 전송된 경우
             }
         }
 
         val options = PhoneAuthOptions.newBuilder(auth)
-            .setPhoneNumber(phoneNumber) // Phone number to verify
-            .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
-            .setActivity(requireActivity()) // Activity (for callback binding)
-            .setCallbacks(callbacks) // Callbacks
+            .setPhoneNumber(phoneNumber) // 검증할 전화번호
+            .setTimeout(60L, TimeUnit.SECONDS) // 타임아웃 설정
+            .setActivity(requireActivity()) // 현재 액티비티
+            .setCallbacks(callbacks) // 콜백 연결
             .build()
 
         PhoneAuthProvider.verifyPhoneNumber(options)
@@ -159,6 +162,10 @@ class ModifyInfoFragment() : Fragment() {
         }
     }
 
+    fun updateButtonState() {
+        fragmentModifyInfoBinding.buttonConfirmVerification.isEnabled = requestComplete
+        fragmentModifyInfoBinding.buttonSave.isEnabled = requestComplete
+    }
 
     // 이전 화면으로 돌아가는 메서드
     fun movePrevFragment(){
