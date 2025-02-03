@@ -80,6 +80,21 @@ class ModifySettingAdapter(
         }
     }
 
+    fun getMainImageView(recyclerView: RecyclerView): ImageView? {
+        // 메인 이미지를 찾기 위해서 이미지 목록을 순회하면서 'isMainImage'가 true인 항목을 반환
+        for (imageData in imageList) {
+            if (imageData.isMainImage) {
+                // Main image가 설정된 경우, 해당 이미지의 ImageView를 반환
+                val position = imageList.indexOf(imageData)
+                // 해당 position에 있는 ViewHolder를 찾음
+                val viewHolder = recyclerView.findViewHolderForAdapterPosition(position) as? ImageViewHolder
+                // ViewHolder가 존재하면, 그 안의 imageViewPreview 반환
+                return viewHolder?.getImageViewPreview()
+            }
+        }
+        // 기본적으로 메인 이미지가 없다면 null 반환
+        return null
+    }
 
     fun getMainBitmap(): Bitmap? {
         // imageList에서 메인 이미지를 찾아 반환
@@ -89,23 +104,6 @@ class ModifySettingAdapter(
             }
         }
         return null // 메인 이미지가 없으면 null 반환
-    }
-
-    fun getSubBitmaps(): List<Bitmap> {
-        val bitmaps = mutableListOf<Bitmap>()
-
-        // imageList는 어댑터에서 관리하는 실제 데이터 리스트
-        for (i in 0 until itemCount) {
-            val imageData = imageList[i] // 어댑터의 데이터 리스트에서 아이템 가져오기
-            val bitmap = imageData.imageBitmap // ImageData에 저장된 Bitmap (만약 저장되어 있다면)
-
-            // Bitmap이 존재하면 리스트에 추가
-            bitmap?.let {
-                bitmaps.add(it) // 비트맵만 추가
-            }
-        }
-
-        return bitmaps
     }
 
     fun getSubImageViews(recyclerView: RecyclerView): List<ImageView> {

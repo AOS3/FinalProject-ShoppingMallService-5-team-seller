@@ -1,21 +1,24 @@
 package com.lion.judamie_seller.fragment
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import com.lion.judamie_seller.R
 import com.lion.judamie_seller.SellerActivity
 import com.lion.judamie_seller.databinding.FragmentProcessingOrderBinding
 import com.lion.judamie_seller.model.CustomerModel
 import com.lion.judamie_seller.model.OrderModel
-import com.lion.judamie_seller.model.OrderPackageModel
 import com.lion.judamie_seller.model.PickupLocationModel
 import com.lion.judamie_seller.model.ProductModel
 import com.lion.judamie_seller.service.SellerService
+import com.lion.judamie_seller.util.OrderState
 import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.viewmodel.ProcessingOrderViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -47,8 +50,10 @@ class ProcessingOrderFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        fragmentProcessingOrderBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_processing_order, container, false)
-        fragmentProcessingOrderBinding.processingOrderViewModel = ProcessingOrderViewModel(this@ProcessingOrderFragment)
+        fragmentProcessingOrderBinding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_processing_order, container, false)
+        fragmentProcessingOrderBinding.processingOrderViewModel =
+            ProcessingOrderViewModel(this@ProcessingOrderFragment)
         fragmentProcessingOrderBinding.lifecycleOwner = this@ProcessingOrderFragment
 
         sellerActivity = activity as SellerActivity
@@ -104,24 +109,68 @@ class ProcessingOrderFragment : Fragment() {
                 processingOrderViewModel?.textViewOrderDateText?.value = formattedDate
                 // productDocumentID로 이름 갖고와야됨
                 processingOrderViewModel?.textViewProductText?.value = productModel.productName
-                val price = (productModel.productPrice * (100 - productModel.productDiscountRate) * 0.01).toInt()
+                val price =
+                    (productModel.productPrice * (100 - productModel.productDiscountRate) * 0.01).toInt()
                 processingOrderViewModel?.textViewPriceText?.value = price.toString()
-                processingOrderViewModel?.textViewQuantityText?.value = orderModel.orderCount.toString()
+                processingOrderViewModel?.textViewQuantityText?.value =
+                    orderModel.orderCount.toString()
                 // PickupLocationData에서 pickupLocDocumentID로 갖고와야됨
-                val address = pickupLocModel.pickupLocStreetAddress + " " + pickupLocModel.pickupLocAddressDetail
+                val address =
+                    pickupLocModel.pickupLocStreetAddress + " " + pickupLocModel.pickupLocAddressDetail
                 processingOrderViewModel?.textViewPickupLocation?.value = address
-                // processingOrderViewModel?.textViewPickupText?.value = orderModel.pickupLocDocumentId
+                when (orderModel.orderState) {
+                    1 -> {
+                        processingOrderViewModel?.textViewDeliveryText?.value = "물건을 픽업지에 전달하세요."
+                        processingOrderViewModel?.textViewPickupText?.value = "배송 전입니다."
+                        processingOrderViewModel?.textViewDepositText?.value = "배송 전입니다."
+                        setUIEnabled()
+                    }
+
+                    2 -> {
+                        processingOrderViewModel?.textViewDeliveryText?.value =
+                            "사용자가 물건을 픽업하지 않았습니다."
+                        processingOrderViewModel?.textViewPickupText?.value = "배송완료"
+                        processingOrderViewModel?.textViewDepositText?.value = "픽업 전입니다."
+                        setUIEnabled()
+                    }
+
+                    3 -> {
+                        processingOrderViewModel?.textViewDeliveryText?.value = "픽업완료"
+                        processingOrderViewModel?.textViewPickupText?.value = "픽업완료"
+                        processingOrderViewModel?.textViewDepositText?.value = "입금 전입니다."
+                        setUIEnabled()
+                    }
+
+                    4 -> {
+                        processingOrderViewModel?.textViewDeliveryText?.value = "픽업완료"
+                        processingOrderViewModel?.textViewPickupText?.value = "픽업완료"
+                        processingOrderViewModel?.textViewDepositText?.value = "입금완료"
+                        setUIEnabled()
+                    }
+                }
             }
         }
     }
 
     // 이전 화면으로 돌아가는 메서드
-    fun movePrevFragment(){
+    fun movePrevFragment() {
         sellerActivity.removeFragment(SellerFragmentType.SELLER_TYPE_DETAIL_ORDER)
     }
 
-    fun buttonDeposit(){
-        // TODO 판매자에게 입금처리하기(후에 구현)
-        sellerActivity.removeFragment(SellerFragmentType.SELLER_TYPE_DETAIL_ORDER)
+    fun buttonDeposit() {
+        CoroutineScope(Dispatchers.Main).launch {
+            orderModel.orderState = OrderState.ORDER_STATE_DELIVERY.num
+            SellerService.updateOderStateData(orderModel)
+            sellerActivity.removeFragment(SellerFragmentType.SELLER_TYPE_DETAIL_ORDER)
+        }
+    }
+
+    fun setUIEnabled() {
+        fragmentProcessingOrderBinding.apply {
+            if (orderModel.orderState != 1) {
+                buttonDeposit.isEnabled = false
+                buttonDeposit.isVisible = false
+            }
+        }
     }
 }

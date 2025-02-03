@@ -3,6 +3,7 @@ package com.lion.judamie_seller.fragment
 import android.annotation.SuppressLint
 import androidx.fragment.app.viewModels
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,8 @@ import com.lion.judamie_seller.databinding.FragmentShowOneSalesDetailBinding
 import com.lion.judamie_seller.model.CustomerModel
 import com.lion.judamie_seller.model.OrderModel
 import com.lion.judamie_seller.model.OrderPackageModel
+import com.lion.judamie_seller.model.ProductModel
+import com.lion.judamie_seller.repository.SellerRepository
 import com.lion.judamie_seller.service.SellerService
 import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.viewmodel.SalesListViewModel
@@ -23,10 +26,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 class ShowOneSalesDetailFragment : Fragment() {
 
@@ -36,18 +42,24 @@ class ShowOneSalesDetailFragment : Fragment() {
 
     private lateinit var orderOwnerId: String
     private lateinit var orderPackageDocumentId: String
-    private lateinit var orderDocumentIds: List<String>
+    private lateinit var sellerStoreName: String
 
     lateinit var customerModel: CustomerModel
     lateinit var orderPackageModel: OrderPackageModel
-    lateinit var orderModels: List<OrderModel>
+    var orderList = mutableListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        fragmentShowOneSalesDetailBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_show_one_sales_detail, container, false)
-        fragmentShowOneSalesDetailBinding.showOneSalesDetailViewModel = ShowOneSalesDetailViewModel(this@ShowOneSalesDetailFragment)
+        fragmentShowOneSalesDetailBinding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_show_one_sales_detail,
+            container,
+            false
+        )
+        fragmentShowOneSalesDetailBinding.showOneSalesDetailViewModel =
+            ShowOneSalesDetailViewModel(this@ShowOneSalesDetailFragment)
         fragmentShowOneSalesDetailBinding.lifecycleOwner = this@ShowOneSalesDetailFragment
 
         sellerActivity = activity as SellerActivity
@@ -62,7 +74,8 @@ class ShowOneSalesDetailFragment : Fragment() {
     fun gettingArguments() {
         val args = arguments
         orderOwnerId = args?.getString("customerDocumentId")!!
-        orderPackageDocumentId= args?.getString("orderPackageDocumentId")!!
+        orderPackageDocumentId = args?.getString("orderPackageDocumentId")!!
+        sellerStoreName = args?.getString("sellerStoreName")!!
     }
 
     // 글 데이터를 가져와 보여주는 메서드
@@ -79,37 +92,102 @@ class ShowOneSalesDetailFragment : Fragment() {
                 SellerService.selectOrderPackageDataOneById(orderPackageDocumentId)
             }
             orderPackageModel = work2.await()
+            orderList.addAll(orderPackageModel.orderDataList)
+            val timeList = mutableListOf<Long>() // orderDocumentId와 orderTransactionTime을 저장할 리스트
+            val productDataList = mutableListOf<String>()
+            val orderDataList = mutableListOf<String>()
 
-//            val work3 = async(Dispatchers.IO) {
-//                // 여러 orderDocumentId 처리
-//                orderPackageModel.orderDataList.forEach { orderData ->
-//                    val orderDataResult = SellerService.selectOrderDataOneById(orderData)
-//                    orderModels.add(orderDataResult) // 결과를 리스트에 추가
-//                }
-//                return@async orderModels  // 최종적으로 여러 OrderModel이 담긴 리스트 반환
-//            }
+            orderList.forEachIndexed { index, order ->
+                val orderList = SellerService.gettingOrderList(order)
 
-            // 여러 OrderModel 처리
-//            orderModels = work3.await()
+                orderList.forEach { orderModel ->
+                    timeList.add(orderModel.orderTransactionTime)
+                    productDataList.add(orderModel.productDocumentId)
+                    orderDataList.add(orderModel.orderDocumentId)
+                }
+            }
 
+            val filteredList = mutableListOf<OrderModel>()
+
+            orderDataList.forEachIndexed { index, orderDocumentId ->
+                val orderData = SellerService.gettingOrderByDocumentId(orderDocumentId)
+
+                orderData?.forEach { orderModel ->
+                    if (orderModel.sellerDocumentId == sellerStoreName) {
+                        filteredList.add(orderModel)
+                    }
+                }
+            }
+
+            val filteredProductList = mutableListOf<ProductModel>()
+            productDataList.forEachIndexed { index, productDocumentId ->
+                val productData = SellerService.gettingProductByDocumentId(productDocumentId)
+
+                productData?.forEach { productModel ->
+                    if (productModel.productSeller == sellerStoreName) {
+                        filteredProductList.add(productModel)
+                    }
+                }
+            }
+
+            val productName = mutableListOf<String>()
+            val productPrice = mutableListOf<Int>()
+            filteredProductList.forEach { productModel ->
+                productName.add(productModel.productName)
+                productPrice.add(productModel.productPrice)
+            }
+
+            val productCount = mutableListOf<Int>()
+            val orderTime = mutableListOf<Long>()
+            filteredList.forEach { orderModel ->
+                orderTime.add(orderModel.orderTime)
+                productCount.add(orderModel.orderCount)
+            }
+
+            val latestTime = if (timeList.isNotEmpty()) {
+                timeList.max()  // Long 타입에서 최대값을 찾음
+            } else {
+                null
+            }
+
+            val latestOrderTime = if (orderTime.isNotEmpty()) {
+                orderTime.max()  // Long 타입에서 최대값을 찾음
+            } else {
+                null
+            }
             fragmentShowOneSalesDetailBinding.apply {
                 showOneSalesDetailViewModel?.textViewCustomerText?.value = customerModel.userId
-//                val instant = Instant.ofEpochMilli(orderModels.)
-//                val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
-//                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-//                val formattedDate = localDateTime.format(formatter)
-//                showOneSalesDetailViewModel?.textViewOrderDateText?.value = formattedDate
-//                // showOneSalesDetailViewModel?.textViewTransactionDateText?.value =
-//                showOneSalesDetailViewModel?.textViewProductText?.value
-//                showOneSalesDetailViewModel?.textViewQuantityText?.value
-//                showOneSalesDetailViewModel?.textViewPriceText?.value
-//                showOneSalesDetailViewModel?.textViewTotalPriceText?.value
+                latestOrderTime?.let { timeInMillis ->
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                    val formattedDate = dateFormat.format(Date(timeInMillis))
+                    showOneSalesDetailViewModel?.textViewOrderDateText?.value = formattedDate
+                }
+                latestTime?.let { timeInMillis ->
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                    val formattedDate = dateFormat.format(Date(timeInMillis))
+                    showOneSalesDetailViewModel?.textViewTransactionDateText?.value = formattedDate
+                }
+                val productNameString = productName.joinToString(", ")
+                showOneSalesDetailViewModel?.textViewProductText?.value = productNameString
+                val orderCountString = productCount.joinToString(", ")
+                showOneSalesDetailViewModel?.textViewQuantityText?.value = orderCountString
+                val productPriceString = productPrice.joinToString(", ")
+                showOneSalesDetailViewModel?.textViewPriceText?.value = productPriceString
+                val index = productName.size
+                var totalPrice = 0
+                var totalPriceSum = 0
+                for (i in 0 until index) {
+                    totalPrice = productPrice[i] * productCount[i]
+                    totalPriceSum += totalPrice
+                }
+                showOneSalesDetailViewModel?.textViewTotalPriceText?.value = totalPriceSum.toString()
             }
         }
     }
 
     // 이전 화면으로 돌아가는 메서드
-    fun movePrevFragment(){
+    fun movePrevFragment() {
         sellerActivity.removeFragment(SellerFragmentType.SELLER_TYPE_DETAIL_SALES)
     }
 }
+

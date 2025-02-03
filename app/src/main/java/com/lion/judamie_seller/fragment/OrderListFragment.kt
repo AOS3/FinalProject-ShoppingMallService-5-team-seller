@@ -28,6 +28,7 @@ class OrderListFragment() : Fragment() {
 
     private val productViewModel: productViewModel by activityViewModels()
 
+    var sellerStoreName: String? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,6 +38,8 @@ class OrderListFragment() : Fragment() {
         fragmentOrderListBinding.lifecycleOwner = this@OrderListFragment
 
         sellerActivity = activity as SellerActivity
+
+        sellerStoreName = arguments?.getString("sellerStoreName")
 
         fragmentOrderListBinding.apply {
             // ViewPager2의 어댑터를 설정한다.
@@ -69,7 +72,7 @@ class OrderListFragment() : Fragment() {
             val dataBundle = Bundle().apply {
                 putString("categoryName", categories[position].str)
                 putInt("ProductType", categories[position].number)
-                putString("sellerDocumentId", productViewModel.sellerDocumentId)
+                putString("sellerStoreName", sellerStoreName)
             }
 
             return OrderCategoryFragment().apply {

@@ -29,6 +29,8 @@ class OrderVO {
     // 주문 상태
     var orderState = 0
 
+    var orderTransactionTime = 0L
+
     fun toOrderModel(orderDocumentId:String) : OrderModel {
         val orderModel = OrderModel()
 
@@ -43,6 +45,7 @@ class OrderVO {
         orderModel.orderPriceAmount = orderPriceAmount
         orderModel.pickupLocDocumentId = pickupLocDocumentId
         orderModel.orderTimeStamp = orderTimeStamp
+        orderModel.orderTransactionTime = orderTransactionTime
 
         when (orderState){
             OrderState.ORDER_STATE_PAYMENT_COMPLETE.num -> orderModel.orderState = OrderState.ORDER_STATE_PAYMENT_COMPLETE.num

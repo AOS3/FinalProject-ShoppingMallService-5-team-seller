@@ -165,12 +165,10 @@ class ModifyProductFragment() : Fragment() {
 
                 val imageUri = work1.await()
                 val recyclerMainView = fragmentModifyProductBinding.recyclerViewMainImages
-                val mainBitmap = mainImagesAdapter.getMainBitmap()
 
-                //TODO
-                sellerActivity.showServiceMainBitmap(
-                    mainBitmap!!,
-                    recyclerMainView.findViewById(R.id.recyclerViewMainImages)
+                sellerActivity.showServiceMainImage(
+                    imageUri,
+                    mainImagesAdapter.getMainImageView(recyclerMainView)!!
                 )
 
                 // 글에 이미지가 있는지...
@@ -308,7 +306,6 @@ class ModifyProductFragment() : Fragment() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
-                // 아무것도 선택하지 않을 경우 처리
             }
         }
     }

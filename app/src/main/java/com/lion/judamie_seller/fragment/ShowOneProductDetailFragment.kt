@@ -170,9 +170,32 @@ class ShowOneProductDetailFragment : Fragment() {
                 SellerService.deleteProductData(productDocumentId)
             }
             work2.join()
+
             // 글 목록 화면으로 이동한다.
             sellerActivity.removeFragment(SellerFragmentType.SELLER_TYPE_DETAIL_PRODUCT)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshProductData()
+    }
+
+    fun refreshProductData() {
+        // 기존 데이터를 초기화
+        fragmentShowOneProductDetailBinding.apply {
+            showOneProductDetailViewModel?.textProductNameText?.value = ""
+            showOneProductDetailViewModel?.textProductCategoryText?.value = ""
+            showOneProductDetailViewModel?.textProductPriceText?.value = ""
+            showOneProductDetailViewModel?.textViewProductDetailText?.value = ""
+            imageViewMainImage.setImageDrawable(null)
+            imageViewMainImage.isVisible = false
+            recyclerViewSubImages.adapter = null
+            recyclerViewSubImages.isVisible = false
+        }
+
+        // 새로운 데이터를 다시 불러옴
+        settingProductData()
     }
 
     // 이전 화면으로 돌아가는 메서드

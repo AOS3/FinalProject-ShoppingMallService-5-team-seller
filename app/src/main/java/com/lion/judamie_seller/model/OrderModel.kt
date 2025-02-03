@@ -15,6 +15,7 @@ class OrderModel {
     var pickupLocDocumentId = ""
     var orderTimeStamp = 0L
     var orderState = 0
+    var orderTransactionTime = 0L
 
     fun toOrderVO() : OrderVO {
         val orderVO = OrderVO()
@@ -29,6 +30,7 @@ class OrderModel {
         orderVO.pickupLocDocumentId = pickupLocDocumentId
         orderVO.orderTimeStamp = orderTimeStamp
         orderVO.orderState = orderState
+        orderVO.orderTransactionTime = orderTransactionTime
         return orderVO
     }
 }
