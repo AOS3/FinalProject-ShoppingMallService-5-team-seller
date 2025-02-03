@@ -22,6 +22,7 @@ class MainFragment : Fragment() {
     private lateinit var sellerStoreName: String
     private lateinit var sellerDocumentId: String
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

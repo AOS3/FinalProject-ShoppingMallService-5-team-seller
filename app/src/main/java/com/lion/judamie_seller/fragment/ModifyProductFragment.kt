@@ -165,12 +165,10 @@ class ModifyProductFragment() : Fragment() {
 
                 val imageUri = work1.await()
                 val recyclerMainView = fragmentModifyProductBinding.recyclerViewMainImages
-                val mainBitmap = mainImagesAdapter.getMainBitmap()
 
-                //TODO
-                sellerActivity.showServiceMainBitmap(
-                    mainBitmap!!,
-                    recyclerMainView.findViewById(R.id.recyclerViewMainImages)
+                sellerActivity.showServiceMainImage(
+                    imageUri,
+                    mainImagesAdapter.getMainImageView(recyclerMainView)!!
                 )
 
                 // 글에 이미지가 있는지...

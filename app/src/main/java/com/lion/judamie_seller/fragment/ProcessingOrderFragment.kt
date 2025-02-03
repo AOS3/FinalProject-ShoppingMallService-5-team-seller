@@ -110,7 +110,28 @@ class ProcessingOrderFragment : Fragment() {
                 // PickupLocationData에서 pickupLocDocumentID로 갖고와야됨
                 val address = pickupLocModel.pickupLocStreetAddress + " " + pickupLocModel.pickupLocAddressDetail
                 processingOrderViewModel?.textViewPickupLocation?.value = address
-                // processingOrderViewModel?.textViewPickupText?.value = orderModel.pickupLocDocumentId
+                when (orderModel.orderState) {
+                    1 -> {
+                        processingOrderViewModel?.textViewDeliveryText?.value = "물건을 픽업지에 전달하세요."
+                        processingOrderViewModel?.textViewPickupText?.value = "배송 전입니다."
+                        processingOrderViewModel?.textViewDepositText?.value = "배송 전입니다."
+                    }
+                    2 -> {
+                        processingOrderViewModel?.textViewDeliveryText?.value = "사용자가 물건을 픽업하지 않았습니다."
+                        processingOrderViewModel?.textViewPickupText?.value = "배송완료"
+                        processingOrderViewModel?.textViewDepositText?.value = "픽업 전입니다."
+                    }
+                    3 -> {
+                        processingOrderViewModel?.textViewDeliveryText?.value = "픽업완료"
+                        processingOrderViewModel?.textViewPickupText?.value = "픽업완료"
+                        processingOrderViewModel?.textViewDepositText?.value = "입금 전입니다."
+                    }
+                    4 -> {
+                        processingOrderViewModel?.textViewDeliveryText?.value = "픽업완료"
+                        processingOrderViewModel?.textViewPickupText?.value = "픽업완료"
+                        processingOrderViewModel?.textViewDepositText?.value = "입금완료"
+                    }
+                }
             }
         }
     }

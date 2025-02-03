@@ -36,7 +36,9 @@ class OrderCategoryFragment : Fragment() {
 
     var recyclerViewList = mutableListOf<OrderModel>()
 
-    var sellerDocumentId: String? = null
+    var productPackageList = mutableListOf<OrderPackageModel>()
+
+    var sellerStoreName: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,7 +52,7 @@ class OrderCategoryFragment : Fragment() {
 
         sellerActivity = activity as SellerActivity
 
-        sellerDocumentId = arguments?.getString("sellerDocumentId")
+        sellerStoreName = arguments?.getString("sellerStoreName")
 
         recyclerViewList.clear()
 
@@ -82,15 +84,15 @@ class OrderCategoryFragment : Fragment() {
     fun refreshCategoryRecyclerView() {
         CoroutineScope(Dispatchers.Main).launch {
             val work1 = async(Dispatchers.IO) {
-                // 선택된 카테고리(`productType`)에 해당하는 데이터만 가져옴
                 SellerService.gettingOrderList(productType)
             }
             recyclerViewList = work1.await()
-                .filter { it.sellerDocumentId == sellerDocumentId }.toMutableList()
+                .filter { it.sellerDocumentId == sellerStoreName }.toMutableList()
 
             val work2 = async(Dispatchers.IO) {
                 SellerService.gettingOrderPackageList()
             }
+            productPackageList = work2.await()
 
             // RecyclerView 업데이트
             fragmentOrderCategoryBinding.recyclerviewCategoryList.adapter?.notifyDataSetChanged()
@@ -123,6 +125,7 @@ class OrderCategoryFragment : Fragment() {
                 dataBundle.putString("customerDocumentId", recyclerViewList[mainViewHolder.adapterPosition].userDocumentId)
                 dataBundle.putString("productDocumentId", recyclerViewList[mainViewHolder.adapterPosition].productDocumentId)
                 dataBundle.putString("pickupLocDocumentId", recyclerViewList[mainViewHolder.adapterPosition].pickupLocDocumentId)
+                dataBundle.putString("orderPackageDocumentId", productPackageList[mainViewHolder.adapterPosition].orderPackageDocumentId)
                 sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_DETAIL_ORDER, true, true, dataBundle)
             }
 
