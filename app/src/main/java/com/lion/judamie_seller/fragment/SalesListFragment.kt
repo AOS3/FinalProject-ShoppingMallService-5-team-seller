@@ -1,6 +1,7 @@
 package com.lion.judamie_seller.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +16,8 @@ import com.lion.judamie_seller.databinding.FragmentSalesListBinding
 import com.lion.judamie_seller.databinding.RowSalesListBinding
 import com.lion.judamie_seller.model.OrderModel
 import com.lion.judamie_seller.model.OrderPackageModel
+import com.lion.judamie_seller.repository.SellerRepository
 import com.lion.judamie_seller.service.SellerService
-import com.lion.judamie_seller.service.SellerService.Companion.checkAndMatchOrderDataList
 import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.viewmodel.SalesListViewModel
 import com.lion.judamie_seller.viewmodel.rowviewmodel.RowOrderCategoryListViewModel
@@ -31,10 +32,10 @@ class SalesListFragment() : Fragment() {
     lateinit var fragmentSalesListBinding: FragmentSalesListBinding
     lateinit var sellerActivity: SellerActivity
 
+    var orderDataList = mutableListOf<OrderPackageModel>()
+
     var sellerStoreName: String? = null
     var recyclerViewList = mutableListOf<OrderPackageModel>()
-
-    var orderDataList = mutableListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,7 +78,24 @@ class SalesListFragment() : Fragment() {
 
             recyclerViewList = work1.await()
 
-            orderDataList = checkAndMatchOrderDataList(recyclerViewList, sellerStoreName)
+            val filteredList = mutableListOf<OrderPackageModel>()
+
+            recyclerViewList.forEach { orderPackage ->
+                orderPackage.orderDataList.forEach { orderDocumentId ->
+                    // 각 orderDocumentId로 OrderData 조회
+                    val orderData = SellerService.gettingOrderByDocumentId(orderDocumentId)
+
+                    orderData.forEachIndexed { index, orderModel ->
+                        if (orderModel.sellerDocumentId == sellerStoreName) {
+                            filteredList.add(orderPackage)
+                        }
+                    }
+                }
+            }
+
+            // 필터링된 리스트를 RecyclerView에 전달
+            recyclerViewList.clear()
+            recyclerViewList.addAll(filteredList)
 
             // RecyclerView 업데이트
             fragmentSalesListBinding.recyclerviewSalesList.adapter?.notifyDataSetChanged()
@@ -100,7 +118,8 @@ class SalesListFragment() : Fragment() {
                 val dataBundle = Bundle()
                 dataBundle.putString("customerDocumentId", recyclerViewList[mainViewHolder.adapterPosition].orderOwnerId)
                 dataBundle.putString("orderPackageDocumentId", recyclerViewList[mainViewHolder.adapterPosition].orderPackageDocumentId)
-                sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_DETAIL_SALES, true, true, null)
+                dataBundle.putString("sellerStoreName",sellerStoreName)
+                sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_DETAIL_SALES, true, true, dataBundle)
             }
             return mainViewHolder
         }

@@ -51,6 +51,8 @@ class SellerActivity : AppCompatActivity() {
 
     // 촬영된 사진이 위치할 경로
     lateinit var filePath: String
+    var sellerDocumentId = ""
+    var sellerStoreName = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,9 +63,12 @@ class SellerActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        filePath = getExternalFilesDir(null).toString()
 
         val dataBundle = intent.extras
+        dataBundle?.let {
+            sellerDocumentId = it.getString("sellerDocumentId", "")
+            sellerStoreName = it.getString("sellerStoreName", "")
+        }
 
         // 첫 프래그먼트를 보여준다.
         replaceFragment(SellerFragmentType.SELLER_TYPE_MAIN, false, false, dataBundle)
@@ -223,9 +228,18 @@ class SellerActivity : AppCompatActivity() {
         Glide.with(this@SellerActivity).load(imageUri).into(imageView)
     }
 
-    fun showServiceMainBitmap(bitmap: Bitmap, imageView: ImageView) {
-        Glide.with(this@SellerActivity)
-            .load(bitmap) // Bitmap을 Glide로 로드
-            .into(imageView) // ImageView에 비트맵을 설정
+    // 키보드를 내리는 메서드
+    fun hideSoftInput(){
+        // 포커스가 있는 뷰가 있다면
+        if(currentFocus != null){
+            // 입력을 관리하는 매니저
+            val inputManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            // 키보드를 내린다.
+            inputManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+            // 포커스를 해제한다.
+            currentFocus?.clearFocus()
+        }
     }
+
+
 }

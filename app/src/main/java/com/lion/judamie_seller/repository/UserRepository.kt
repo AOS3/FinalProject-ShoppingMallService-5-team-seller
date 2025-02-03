@@ -71,7 +71,7 @@ class UserRepository {
             val collectionReference = firestore.collection("SellerData")
             val documentReference = collectionReference.document(userDocumentId)
             val tokenMap = mapOf(
-                "userAutoLoginToken" to newToken
+                "sellerAutoLoginToken" to newToken
             )
             documentReference.update(tokenMap).await()
         }

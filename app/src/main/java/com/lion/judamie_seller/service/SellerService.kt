@@ -66,39 +66,6 @@ class SellerService {
             return orderPackageList
         }
 
-        suspend fun checkAndMatchOrderDataList(orderPackageList: MutableList<OrderPackageModel>, sellerStoreName: String?): MutableList<String> {
-            // Firestore 인스턴스를 가져옴
-            val firestore = FirebaseFirestore.getInstance()
-
-            // 결과를 담을 리스트
-            val matchingOrders = mutableListOf<String>()  // sellerDocumentId와 sellerStoreName이 일치하는 주문들의 documentId를 담을 리스트
-
-            // 각 OrderPackageModel을 순회
-            for (orderPackage in orderPackageList) {
-                // OrderPackage 내의 orderDataList를 순회
-                for (documentId in orderPackage.orderDataList) {
-                    // Firestore에서 해당 DocumentId로 OrderData를 조회
-                    val orderDataRef = firestore.collection("OrderData").document(documentId)
-                    val orderDataSnapshot = orderDataRef.get().await()
-
-                    // Firestore에서 데이터를 확인한 후, 문서가 존재하면 sellerDocumentId와 sellerStoreName 비교
-                    if (orderDataSnapshot.exists()) {
-                        val sellerDocumentId = orderDataSnapshot.getString("sellerDocumentId")
-
-                        // sellerDocumentId와 sellerStoreName이 동일한지 확인
-                        if (sellerDocumentId == sellerStoreName) {
-                            // 일치하면 해당 documentId를 리스트에 추가
-                            matchingOrders.add(documentId)
-                        }
-                    }
-                }
-            }
-
-            // 일치하는 주문들의 documentId를 반환
-            return matchingOrders
-        }
-
-
         // 주문 목록을 가져오는 메서드
         suspend fun gettingOrderList(productType: ProductType) : MutableList<OrderModel>{
             // 글정보를 가져온다.
@@ -114,12 +81,69 @@ class SellerService {
 
             return orderList
         }
+
+        // 주문 목록을 가져오는 메서드
+        suspend fun gettingOrderList(orderDocumentId: String) : MutableList<OrderModel>{
+            // 글정보를 가져온다.
+            val orderList = mutableListOf<OrderModel>()
+            val resultList = SellerRepository.getOrderByDocumentId(orderDocumentId)
+
+            resultList.forEach {
+                val orderVO = it["orderVO"] as OrderVO
+                val documentId = it["documentId"] as String
+                val orderModel = orderVO.toOrderModel(documentId)
+                orderList.add(orderModel)
+            }
+
+            return orderList
+        }
+
+        // 주문 목록을 가져오는 메서드
+        suspend fun gettingOrderByDocumentId(orderDocumentId: String) : MutableList<OrderModel>{
+            // 글정보를 가져온다.
+            val orderList = mutableListOf<OrderModel>()
+            val resultList = SellerRepository.getOrderByDocumentId(orderDocumentId)
+
+            resultList.forEach {
+                val orderVO = it["orderVO"] as OrderVO
+                val documentId = it["documentId"] as String
+                val orderModel = orderVO.toOrderModel(documentId)
+                orderList.add(orderModel)
+            }
+
+            return orderList
+        }
+
+
+        // 주문 목록을 가져오는 메서드
+        suspend fun gettingProductByDocumentId(productDocumentId: String) : MutableList<ProductModel>{
+            // 글정보를 가져온다.
+            val productList = mutableListOf<ProductModel>()
+            val resultList = SellerRepository.getProductByDocumentId(productDocumentId)
+
+            resultList.forEach {
+                val productVO = it["productVO"] as ProductVO
+                val documentId = it["documentId"] as String
+                val productModel = productVO.toProductModel(documentId)
+                productList.add(productModel)
+            }
+
+            return productList
+        }
+
         // 글정보를 수정하는 메서드
         suspend fun updateProductData(productModel: ProductModel){
             // vo 객체에 담아준다.
             val productVO = productModel.toProductVO()
             // 수정하는 메서드를 호출한다.
             SellerRepository.updateProductData(productVO, productModel.productDocumentId)
+        }
+
+        suspend fun updateOderStateData(orderModel: OrderModel){
+            // vo 객체에 담아준다.
+            val orderVO = orderModel.toOrderVO()
+            // 수정하는 메서드를 호출한다.
+            SellerRepository.updateOrderStateData(orderVO, orderModel.orderDocumentId)
         }
 
         // 서버에서 이미지 파일을 삭제한다.

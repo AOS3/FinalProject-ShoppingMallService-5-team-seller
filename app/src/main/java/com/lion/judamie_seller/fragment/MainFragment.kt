@@ -44,8 +44,8 @@ class MainFragment : Fragment() {
     // arguments의 값을 변수에 담아준다.
     fun gettingArguments() {
         val args = arguments
-        sellerStoreName = args?.getString("seller_store_name")!!
-        sellerDocumentId = args?.getString("seller_document_id")!!
+        sellerStoreName = args?.getString("sellerStoreName")!!
+        sellerDocumentId = args?.getString("sellerDocumentId")!!
     }
 
     // 상품 관리 화면으로 이동시키는 메서드

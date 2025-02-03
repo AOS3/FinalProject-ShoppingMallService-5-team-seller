@@ -36,8 +36,6 @@ class OrderCategoryFragment : Fragment() {
 
     var recyclerViewList = mutableListOf<OrderModel>()
 
-    var productPackageList = mutableListOf<OrderPackageModel>()
-
     var sellerStoreName: String? = null
 
     override fun onCreateView(
@@ -89,11 +87,6 @@ class OrderCategoryFragment : Fragment() {
             recyclerViewList = work1.await()
                 .filter { it.sellerDocumentId == sellerStoreName }.toMutableList()
 
-            val work2 = async(Dispatchers.IO) {
-                SellerService.gettingOrderPackageList()
-            }
-            productPackageList = work2.await()
-
             // RecyclerView 업데이트
             fragmentOrderCategoryBinding.recyclerviewCategoryList.adapter?.notifyDataSetChanged()
         }
@@ -125,7 +118,6 @@ class OrderCategoryFragment : Fragment() {
                 dataBundle.putString("customerDocumentId", recyclerViewList[mainViewHolder.adapterPosition].userDocumentId)
                 dataBundle.putString("productDocumentId", recyclerViewList[mainViewHolder.adapterPosition].productDocumentId)
                 dataBundle.putString("pickupLocDocumentId", recyclerViewList[mainViewHolder.adapterPosition].pickupLocDocumentId)
-                dataBundle.putString("orderPackageDocumentId", productPackageList[mainViewHolder.adapterPosition].orderPackageDocumentId)
                 sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_DETAIL_ORDER, true, true, dataBundle)
             }
 

@@ -89,6 +89,51 @@ class SellerRepository {
             return resultList
         }
 
+        suspend fun getOrderByDocumentId(orderDocumentId: String): MutableList<Map<String, *>> {
+            val firestore = FirebaseFirestore.getInstance()
+
+            // 주어진 orderDocumentId를 기반으로 문서를 가져온다.
+            val result = firestore.collection("OrderData")
+                .document(orderDocumentId) // 특정 문서 ID 조회
+                .get()
+                .await()
+
+            // 결과가 있을 경우에만 처리
+            if (result.exists()) {
+                val orderVO = result.toObject(OrderVO::class.java)
+                val documentId = result.id
+                val orderData = mapOf(
+                    "documentId" to documentId,
+                    "orderVO" to orderVO
+                )
+                return mutableListOf(orderData)
+            } else {
+                return mutableListOf() // 문서가 없을 경우 빈 리스트 반환
+            }
+        }
+
+        suspend fun getProductByDocumentId(productDocumentId: String): MutableList<Map<String, *>> {
+            val firestore = FirebaseFirestore.getInstance()
+
+            // 주어진 orderDocumentId를 기반으로 문서를 가져온다.
+            val result = firestore.collection("ProductData")
+                .document(productDocumentId) // 특정 문서 ID 조회
+                .get()
+                .await()
+
+            // 결과가 있을 경우에만 처리
+            if (result.exists()) {
+                val productVO = result.toObject(ProductVO::class.java)
+                val documentId = result.id
+                val productData = mapOf(
+                    "documentId" to documentId,
+                    "productVO" to productVO
+                )
+                return mutableListOf(productData)
+            } else {
+                return mutableListOf() // 문서가 없을 경우 빈 리스트 반환
+            }
+        }
 
         // 글 목록을 가져오는 메서드
         suspend fun gettingOrderPackageList() : MutableList<Map<String, *>>{
@@ -148,6 +193,17 @@ class SellerRepository {
                 "productStock" to productVO.productStock,
                 "productDescription" to productVO.productDescription,
                 "productSubImage" to productVO.productSubImage
+            )
+            // 수정한다.
+            documentReference.update(updateMap).await()
+        }
+
+        suspend fun updateOrderStateData(orderVO: OrderVO, orderDocumentId:String) {
+            val firestore = FirebaseFirestore.getInstance()
+            val collectionReference = firestore.collection("OrderData")
+            val documentReference = collectionReference.document(orderDocumentId)
+            val updateMap = mapOf(
+                "orderState" to orderVO.orderState
             )
             // 수정한다.
             documentReference.update(updateMap).await()
