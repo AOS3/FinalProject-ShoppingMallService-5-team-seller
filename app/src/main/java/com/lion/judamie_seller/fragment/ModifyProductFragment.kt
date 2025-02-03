@@ -306,7 +306,6 @@ class ModifyProductFragment() : Fragment() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
-                // 아무것도 선택하지 않을 경우 처리
             }
         }
     }

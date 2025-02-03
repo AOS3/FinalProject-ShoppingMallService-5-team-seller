@@ -78,25 +78,6 @@ class SalesListFragment() : Fragment() {
 
             recyclerViewList = work1.await()
 
-            val filteredList = mutableListOf<OrderPackageModel>()
-
-            recyclerViewList.forEach { orderPackage ->
-                orderPackage.orderDataList.forEach { orderDocumentId ->
-                    // 각 orderDocumentId로 OrderData 조회
-                    val orderData = SellerService.gettingOrderByDocumentId(orderDocumentId)
-
-                    orderData.forEachIndexed { index, orderModel ->
-                        if (orderModel.sellerDocumentId == sellerStoreName) {
-                            filteredList.add(orderPackage)
-                        }
-                    }
-                }
-            }
-
-            // 필터링된 리스트를 RecyclerView에 전달
-            recyclerViewList.clear()
-            recyclerViewList.addAll(filteredList)
-
             // RecyclerView 업데이트
             fragmentSalesListBinding.recyclerviewSalesList.adapter?.notifyDataSetChanged()
         }
