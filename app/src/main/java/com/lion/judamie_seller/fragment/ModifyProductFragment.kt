@@ -165,10 +165,12 @@ class ModifyProductFragment() : Fragment() {
 
                 val imageUri = work1.await()
                 val recyclerMainView = fragmentModifyProductBinding.recyclerViewMainImages
+                val mainBitmap = mainImagesAdapter.getMainBitmap()
 
-                sellerActivity.showServiceMainImage(
-                    imageUri,
-                    mainImagesAdapter.getMainImageView(recyclerMainView)!!
+                //TODO
+                sellerActivity.showServiceMainBitmap(
+                    mainBitmap!!,
+                    recyclerMainView.findViewById(R.id.recyclerViewMainImages)
                 )
 
                 // 글에 이미지가 있는지...
@@ -379,8 +381,8 @@ class ModifyProductFragment() : Fragment() {
                             productModel.productMainImage =
                                 "main_image_${productModel.productDocumentId}.jpg"
                             // 로컬에 ImageView에 있는 이미지 데이터를 저장한다.
-                            mainImagesAdapter.getMainImageView(recyclerViewMainImages)
-                                ?.let { sellerActivity.saveMainImageView(it) }
+                            mainImagesAdapter.getMainBitmap()
+                                ?.let { sellerActivity.saveMainBitmap(it) }
 
                             val work2 = async(Dispatchers.IO) {
                                 SellerService.uploadImage(
