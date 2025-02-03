@@ -157,43 +157,22 @@ class SellerActivity : AppCompatActivity() {
         }
     }
 
-    fun saveMainImageView(imageView: ImageView?) {
-        saveImageView(imageView, "UploadMain")
+    fun saveMainBitmap(bitmap: Bitmap) {
+        saveBitmap(bitmap, "UploadMain")
     }
 
-    // 이미지의 사이즈를 줄이는 메서드
-    fun resizeBitmap(targetWidth:Int, bitmap:Bitmap):Bitmap{
-        // 이미지의 축소/확대 비율을 구한다.
-        val ratio = targetWidth.toDouble() / bitmap.width.toDouble()
-        // 세로 길이를 구한다.
-        val targetHeight = (bitmap.height.toDouble() * ratio).toInt()
-        // 크기를 조절한 Bitmap 객체를 생성한다.
-        val result = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false)
-        return result
-    }
+    fun saveSubBitmaps(bitmaps: List<Bitmap>) {
+        bitmaps.forEachIndexed { index, bitmap ->
+            val fileName = "UploadSub_$index.jpg"
+            val file = File("$filePath/$fileName")
 
-    fun saveSubImageViews(imageViews: List<ImageView>) {
-        // ImageView 리스트 전체를 순회
-        imageViews.forEachIndexed { index, imageView ->
-            // 이미지 데이터를 추출
-            val bitmapDrawable = imageView.drawable as? BitmapDrawable
-            val bitmap = bitmapDrawable?.bitmap
-
-            // 만약 비트맵이 null이라면 저장을 건너뛰기
-            if (bitmap != null) {
-                // 고유한 파일 이름 생성 (이미지 인덱스를 붙여서 저장)
-                val fileName = "UploadSub_$index.jpg"
-                val file = File("$filePath/$fileName")
-
-                // 파일로 저장
-                try {
-                    val fileOutputStream = FileOutputStream(file)
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream)
-                    fileOutputStream.flush()
-                    fileOutputStream.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
+            try {
+                val fileOutputStream = FileOutputStream(file)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream)
+                fileOutputStream.flush()
+                fileOutputStream.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
         }
     }
@@ -224,22 +203,29 @@ class SellerActivity : AppCompatActivity() {
         }
     }
 
-    fun saveImageView(imageView: ImageView?, fileName: String){
-        // ImageView에서 이미지 데이터를 추출한다.
-        val bitmapDrawable = imageView?.drawable as BitmapDrawable
-        val bitmap = bitmapDrawable.bitmap
+    fun saveBitmap(bitmap: Bitmap, fileName: String) {
+        try {
+            // 저장할 파일의 경로 설정
+            val file = File("$filePath/$fileName.jpg")
 
-        // 저장할 파일의 경로
-        val file = File("${filePath}/$fileName.jpg")
-        // 파일로 저장한다.
-        val fileOutputStream = FileOutputStream(file)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream)
-        fileOutputStream.flush()
-        fileOutputStream.close()
+            // 파일 출력 스트림 생성
+            FileOutputStream(file).use { fileOutputStream ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream)
+                fileOutputStream.flush()
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 
     // 서버에 있는 이미지를 가져와 ImageView에 보여준다.
     fun showServiceMainImage(imageUri: Uri, imageView: ImageView){
         Glide.with(this@SellerActivity).load(imageUri).into(imageView)
+    }
+
+    fun showServiceMainBitmap(bitmap: Bitmap, imageView: ImageView) {
+        Glide.with(this@SellerActivity)
+            .load(bitmap) // Bitmap을 Glide로 로드
+            .into(imageView) // ImageView에 비트맵을 설정
     }
 }

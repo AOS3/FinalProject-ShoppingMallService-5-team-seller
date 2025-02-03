@@ -1,5 +1,8 @@
 package com.lion.judamie_seller.adapter
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -86,37 +89,30 @@ class ImageSettingAdapter(
         }
     }
 
-    fun getMainImageView(recyclerView: RecyclerView): ImageView? {
-        // 메인 이미지를 찾기 위해서 이미지 목록을 순회하면서 'isMainImage'가 true인 항목을 반환
+    fun getMainBitmap(): Bitmap? {
+        // imageList에서 메인 이미지를 찾아 반환
         for (imageData in imageList) {
-            if (imageData.isMainImage) {
-                // Main image가 설정된 경우, 해당 이미지의 ImageView를 반환
-                val position = imageList.indexOf(imageData)
-                // 해당 position에 있는 ViewHolder를 찾음
-                val viewHolder = recyclerView.findViewHolderForAdapterPosition(position) as? ImageViewHolder
-                // ViewHolder가 존재하면, 그 안의 imageViewPreview 반환
-                return viewHolder?.getImageViewPreview()
+            if (imageData.isMainImage) { // isMainImage가 true인 항목 찾기
+                return imageData.imageBitmap // 해당 이미지의 Bitmap 반환
             }
         }
-        // 기본적으로 메인 이미지가 없다면 null 반환
-        return null
+        return null // 메인 이미지가 없으면 null 반환
     }
 
-    fun getSubImageViews(recyclerView: RecyclerView): List<ImageView> {
-        val subImageViews = mutableListOf<ImageView>()
+    fun getSubBitmaps(): List<Bitmap> {
+        val bitmaps = mutableListOf<Bitmap>()
 
-                for (imageData in imageList) {
-            if (!imageData.isMainImage) {
-                // Main image가 설정된 경우, 해당 이미지의 ImageView를 찾기 위해 position을 가져옴
-                val position = imageList.indexOf(imageData)
-                // 해당 position에 있는 ViewHolder를 찾음
-                val viewHolder = recyclerView.findViewHolderForAdapterPosition(position) as? ImageViewHolder
-                // ViewHolder가 존재하면, 그 안의 imageViewPreview를 리스트에 추가
-                viewHolder?.getImageViewPreview()?.let { subImageViews.add(it) }
+        // imageList는 어댑터에서 관리하는 실제 데이터 리스트
+        for (i in 0 until itemCount) {
+            val imageData = imageList[i] // 어댑터의 데이터 리스트에서 아이템 가져오기
+            val bitmap = imageData.imageBitmap // ImageData에 저장된 Bitmap (만약 저장되어 있다면)
+
+            // Bitmap이 존재하면 리스트에 추가
+            bitmap?.let {
+                bitmaps.add(it) // 비트맵만 추가
             }
         }
 
-        // 메인 이미지들로 구성된 리스트 반환
-        return subImageViews
+        return bitmaps
     }
 }

@@ -12,6 +12,7 @@ import com.lion.judamie_seller.SellerActivity
 import com.lion.judamie_seller.databinding.FragmentProcessingOrderBinding
 import com.lion.judamie_seller.model.CustomerModel
 import com.lion.judamie_seller.model.OrderModel
+import com.lion.judamie_seller.model.OrderPackageModel
 import com.lion.judamie_seller.model.PickupLocationModel
 import com.lion.judamie_seller.model.ProductModel
 import com.lion.judamie_seller.service.SellerService
@@ -111,42 +112,6 @@ class ProcessingOrderFragment : Fragment() {
                 processingOrderViewModel?.textViewPickupLocation?.value = address
                 // processingOrderViewModel?.textViewPickupText?.value = orderModel.pickupLocDocumentId
             }
-
-//            // 첨부 이미지가 있다면
-//            if (productModel.productMainImage != "none") {
-//                val work1 = async(Dispatchers.IO) {
-//                    // 이미지에 접근할 수 있는 uri를 가져온다.
-//                    SellerService.gettingMainImage(productModel.productMainImage)
-//                }
-//
-//                val imageUri = work1.await()
-//                sellerActivity.showServiceMainImage(
-//                    imageUri,
-//                    fragmentShowOneProductDetailBinding.imageViewMainImage
-//                )
-//                fragmentShowOneProductDetailBinding.imageViewMainImage.isVisible = true
-//            }
-//            Log.d("SubImageLog", "${productModel.productSubImage.isNotEmpty()}")
-//
-//            // SubImages 표시
-//            if (productModel.productSubImage.isNotEmpty()) {
-//                // SubImage가 존재하면 이미지 URIs를 가져온다.
-//                val subImageUris = SellerService.gettingSubImages(productModel.productSubImage)
-//                Log.d("SubImageLog", "${productModel.productSubImage}")
-//                // URI 리스트를 어댑터에 전달
-//                fragmentShowOneProductDetailBinding.recyclerViewSubImages.layoutManager = LinearLayoutManager(context)
-//                fragmentShowOneProductDetailBinding.recyclerViewSubImages.adapter = ImageAdapter(subImageUris)
-//                fragmentShowOneProductDetailBinding.recyclerViewSubImages.isVisible = true
-//            } else {
-//                // SubImage가 없을 경우 기본 이미지를 표시
-//                val defaultImageUri: Uri? = null  // 기본 이미지 표시를 위한 URI (null이면 Glide에서 기본 이미지로 대체)
-//                val defaultUris = listOf(defaultImageUri)
-//
-//                // 기본 이미지 URI를 어댑터에 전달
-//                fragmentShowOneProductDetailBinding.recyclerViewSubImages.layoutManager = LinearLayoutManager(context)
-//                fragmentShowOneProductDetailBinding.recyclerViewSubImages.adapter = ImageAdapter(defaultUris)
-//                fragmentShowOneProductDetailBinding.recyclerViewSubImages.isVisible = true
-//            }
         }
     }
 

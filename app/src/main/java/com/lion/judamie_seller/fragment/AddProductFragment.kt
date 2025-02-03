@@ -1,6 +1,9 @@
 package com.lion.judamie_seller.fragment
 
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -135,16 +138,19 @@ class AddProductFragment() : Fragment() {
                 if (imageUri != null) {
                     if (isMainImage) {
                         // 대표 이미지를 업데이트
-                        mainImagesAdapter.setImages(listOf(ImageData(imageUrl = imageUri.toString(), isMainImage = true, isDefault = false)))
+                        val bitmap = uriToBitmap(imageUri, requireContext())
+                        mainImagesAdapter.setImages(listOf(ImageData(imageUrl = imageUri.toString(), isMainImage = true, isDefault = false, imageBitmap = bitmap)))
                         isSetImageView = true
                     } else {
+                        val bitmap = uriToBitmap(imageUri, requireContext())
                         if (subImagesAdapter.Items.any { it.isDefault })  {
                             subImagesAdapter.setImages(
                                 listOf(
                                     ImageData(
                                         imageUrl = imageUri.toString(),
                                         isMainImage = false,
-                                        isDefault = false
+                                        isDefault = false,
+                                        imageBitmap = bitmap
                                     )
                                 )
                             )
@@ -154,7 +160,8 @@ class AddProductFragment() : Fragment() {
                                 ImageData(
                                     imageUrl = imageUri.toString(),
                                     isMainImage = false,
-                                    isDefault = false
+                                    isDefault = false,
+                                    imageBitmap = bitmap
                                 )
                             )
                             isSetImageView = true
@@ -296,27 +303,27 @@ class AddProductFragment() : Fragment() {
 
                 // 이미지가 첨부되어 있다면
                 if(isSetImageView) {
-                    val productModel = ProductModel()
                     // 서버상에서의 파일 이름
                     productMainFileName = "main_image_${System.currentTimeMillis()}.jpg"
                     // 로컬에 ImageView에 있는 이미지 데이터를 저장한다.
-                    mainImagesAdapter.getMainImageView(recyclerViewMainImages)
-                        ?.let { sellerActivity.saveMainImageView(it) }
+                     mainImagesAdapter.getMainBitmap()
+                        ?.let { sellerActivity.saveMainBitmap(it) }
 
-                    val imageView = subImagesAdapter.getSubImageViews(recyclerViewSubImages)
-                    val subImageCount = subImagesAdapter.itemCount
+                    val bitmaps = subImagesAdapter.getSubBitmaps()  // List<Bitmap> 형태로 반환
+                    val subImageCount = bitmaps.size  // subImagesAdapter.itemCount는 비트맵 수와 일치함
+                    var productSubFileName: String
                     // 서브 이미지 파일 이름을 리스트로 관리
                     for (index in 0 until subImageCount) {
                         // 고유한 파일 이름 생성
-                        productSubFileName =
-                            "sub_image_${System.currentTimeMillis()}.jpg"
+                        productSubFileName = "sub_image_${System.currentTimeMillis()}.jpg"
 
                         // 이미지 저장
-                        sellerActivity.saveSubImageViews(imageView)
+                        sellerActivity.saveSubBitmaps(bitmaps)  // saveSubBitmaps 수정 필요
 
                         // 서브 이미지 파일 이름을 리스트에 추가
                         productSubFileNames.add(productSubFileName)
                     }
+
 
 
                     // 이미지 업로드
@@ -385,6 +392,16 @@ class AddProductFragment() : Fragment() {
             textInputDiscount.isEnabled = enabled
             textInputStock.isEnabled = enabled
             textInputDescription.isEnabled = enabled
+        }
+    }
+
+    private fun uriToBitmap(uri: Uri, context: Context): Bitmap? {
+        return try {
+            val inputStream = context.contentResolver.openInputStream(uri)
+            BitmapFactory.decodeStream(inputStream)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 }

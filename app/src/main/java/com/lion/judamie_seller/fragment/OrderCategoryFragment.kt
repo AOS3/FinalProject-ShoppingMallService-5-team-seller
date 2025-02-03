@@ -15,6 +15,7 @@ import com.lion.judamie_seller.SellerActivity
 import com.lion.judamie_seller.databinding.FragmentOrderCategoryBinding
 import com.lion.judamie_seller.databinding.RowOrderCategoryListBinding
 import com.lion.judamie_seller.model.OrderModel
+import com.lion.judamie_seller.model.OrderPackageModel
 import com.lion.judamie_seller.service.SellerService
 import com.lion.judamie_seller.util.ProductType
 import com.lion.judamie_seller.util.SellerFragmentType
@@ -86,6 +87,10 @@ class OrderCategoryFragment : Fragment() {
             }
             recyclerViewList = work1.await()
                 .filter { it.sellerDocumentId == sellerDocumentId }.toMutableList()
+
+            val work2 = async(Dispatchers.IO) {
+                SellerService.gettingOrderPackageList()
+            }
 
             // RecyclerView 업데이트
             fragmentOrderCategoryBinding.recyclerviewCategoryList.adapter?.notifyDataSetChanged()
