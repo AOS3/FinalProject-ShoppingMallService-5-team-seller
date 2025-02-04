@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -52,9 +53,6 @@ class UserActivity : AppCompatActivity() {
 
         // 자동 로그인 처리 메서드 호출
         userAutoLoginProcessing()
-
-        // 첫번째 Fragment를 설정한다.
-        // replaceFragment(UserFragmentName.USER_LOGIN_FRAGMENT, false, false, null)
     }
 
     fun replaceFragment(fragmentName: UserFragmentName, isAddToBackStack:Boolean, animate:Boolean, dataBundle: Bundle?){
@@ -119,17 +117,20 @@ class UserActivity : AppCompatActivity() {
 
     // 키보드 올리는 메서드
     fun showSoftInput(view: View){
-        // 입력을 관리하는 매니저
-        val inputManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        // 포커스를 준다.
-        view.requestFocus()
+        view.post {
+            // 입력을 관리하는 매니저
+            val inputManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            // 포커스를 준다.
+            view.requestFocus()
 
-        thread {
-            SystemClock.sleep(500)
-            // 키보드를 올린다.
-            inputManager.showSoftInput(view, 0)
+            thread {
+                SystemClock.sleep(500)
+                // 키보드를 올린다.
+                inputManager.showSoftInput(view, 0)
+            }
         }
     }
+
     // 키보드를 내리는 메서드
     fun hideSoftInput(){
         // 포커스가 있는 뷰가 있다면
@@ -179,12 +180,13 @@ class UserActivity : AppCompatActivity() {
                 if(loginUserModel != null){
                     // ProductActivity를 실행하고 현재 Activity를 종료한다.
                     val productIntent = Intent(this@UserActivity, SellerActivity::class.java)
-                    productIntent.putExtra("user_document_id", loginUserModel.userDocumentId)
-                    productIntent.putExtra("user_nick_name", loginUserModel.userNickName)
+                    productIntent.putExtra("sellerDocumentId", loginUserModel.sellerDocumentId)
+                    productIntent.putExtra("sellerStoreName", loginUserModel.storeName)
+                    productIntent.putExtra("sellerPw", loginUserModel.sellerPw)
+                    Log.d("userDocumentId3","${loginUserModel.sellerPw}")
                     startActivity(productIntent)
                     finish()
                 } else {
-                    // 첫번째 Fragment를 설정한다.
                     replaceFragment(UserFragmentName.USER_LOGIN_FRAGMENT, false, false, null)
                 }
             } else {

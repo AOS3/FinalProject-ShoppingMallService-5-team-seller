@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import com.lion.judamie_seller.R
 import com.lion.judamie_seller.SellerActivity
+import com.lion.judamie_seller.UserFragmentName
 import com.lion.judamie_seller.databinding.FragmentMainBinding
 import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.viewmodel.MainViewModel
@@ -17,6 +18,11 @@ class MainFragment : Fragment() {
 
     lateinit var fragmentMainBinding: FragmentMainBinding
     lateinit var sellerActivity: SellerActivity
+
+    private lateinit var sellerStoreName: String
+    private lateinit var sellerDocumentId: String
+    private lateinit var sellerPw: String
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,28 +37,59 @@ class MainFragment : Fragment() {
         val dataBundle = Bundle()
         dataBundle.putInt("SellerType", SellerFragmentType.SELLER_TYPE_MAIN.number)
 
+        gettingArguments()
+
         return fragmentMainBinding.root
     }
 
-
-    // 회원 가입 화면으로 이동시키는 메서드
-    fun moveToProductManagement(){
-        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_PRODUCT_MANAGEMENT, true, true, null)
+    // arguments의 값을 변수에 담아준다.
+    fun gettingArguments() {
+        val args = arguments
+        sellerStoreName = args?.getString("sellerStoreName")!!
+        sellerDocumentId = args?.getString("sellerDocumentId")!!
+        sellerPw = args?.getString("sellerPw")!!
     }
 
-    // 회원 가입 화면으로 이동시키는 메서드
+    // 상품 관리 화면으로 이동시키는 메서드
+    fun moveToProductManagement() {
+        // 데이터를 담는다.
+        val dataBundle = Bundle()
+        dataBundle.putString("sellerDocumentId", sellerDocumentId)
+        dataBundle.putString("sellerStoreName", sellerStoreName)
+        sellerActivity.replaceFragment(
+            SellerFragmentType.SELLER_TYPE_PRODUCT_MANAGEMENT,
+            true,
+            true,
+            dataBundle
+        )
+    }
+
+    // 주문 내역 화면으로 이동시키는 메서드
     fun moveToOrderList(){
-        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_ORDER_LIST, true, true, null)
+        // 데이터를 담는다.
+        val dataBundle = Bundle()
+        dataBundle.putString("sellerDocumentId", sellerDocumentId)
+        dataBundle.putString("sellerStoreName", sellerStoreName)
+        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_ORDER_LIST, true, true, dataBundle)
     }
 
-    // 회원 가입 화면으로 이동시키는 메서드
+    // 거래 내역 화면으로 이동시키는 메서드
     fun moveToSalesList(){
-        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_SALES_LIST, true, true, null)
+        // 데이터를 담는다.
+        val dataBundle = Bundle()
+        dataBundle.putString("sellerDocumentId", sellerDocumentId)
+        dataBundle.putString("sellerStoreName", sellerStoreName)
+        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_SALES_LIST, true, true, dataBundle)
     }
 
-    // 회원 가입 화면으로 이동시키는 메서드
+    // 개인 정보 변경 화면으로 이동시키는 메서드
     fun moveToModifyInfo(){
-        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_INFO, true, true, null)
+        // 데이터를 담는다.
+        val dataBundle = Bundle()
+        dataBundle.putString("sellerDocumentId", sellerDocumentId)
+        dataBundle.putString("sellerStoreName", sellerStoreName)
+        dataBundle.putString("sellerPw", sellerStoreName)
+        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_INFO, true, true, dataBundle)
     }
 
     // 프래그먼트를 BackStack에서 제거하는 메서드

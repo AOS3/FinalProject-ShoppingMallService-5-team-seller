@@ -136,7 +136,7 @@ class ShowOneProductDetailFragment : Fragment() {
             if (productModel.productSubImage.isNotEmpty()) {
                 // SubImage가 존재하면 이미지 URIs를 가져온다.
                 val subImageUris = SellerService.gettingSubImages(productModel.productSubImage)
-
+                Log.d("SubImageLog", "${productModel.productSubImage}")
                 // URI 리스트를 어댑터에 전달
                 fragmentShowOneProductDetailBinding.recyclerViewSubImages.layoutManager = LinearLayoutManager(context)
                 fragmentShowOneProductDetailBinding.recyclerViewSubImages.adapter = ImageAdapter(subImageUris)
@@ -160,7 +160,8 @@ class ShowOneProductDetailFragment : Fragment() {
             // 만약 첨부 이미지가 있다면 삭제한다.
             if(productModel.productName != "none"){
                 val work1 = async(Dispatchers.IO){
-                    SellerService.removeImageFile(productModel.productName)
+                    SellerService.removeImageFile(productModel.productMainImage)
+                    SellerService.removeImageFiles(productModel.productSubImage)
                 }
                 work1.join()
             }
@@ -169,9 +170,32 @@ class ShowOneProductDetailFragment : Fragment() {
                 SellerService.deleteProductData(productDocumentId)
             }
             work2.join()
+
             // 글 목록 화면으로 이동한다.
-            sellerActivity.removeFragment(SellerFragmentType.SELLER_TYPE_SHOW_ONE_PRODUCT_DETAIL)
+            sellerActivity.removeFragment(SellerFragmentType.SELLER_TYPE_DETAIL_PRODUCT)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshProductData()
+    }
+
+    fun refreshProductData() {
+        // 기존 데이터를 초기화
+        fragmentShowOneProductDetailBinding.apply {
+            showOneProductDetailViewModel?.textProductNameText?.value = ""
+            showOneProductDetailViewModel?.textProductCategoryText?.value = ""
+            showOneProductDetailViewModel?.textProductPriceText?.value = ""
+            showOneProductDetailViewModel?.textViewProductDetailText?.value = ""
+            imageViewMainImage.setImageDrawable(null)
+            imageViewMainImage.isVisible = false
+            recyclerViewSubImages.adapter = null
+            recyclerViewSubImages.isVisible = false
+        }
+
+        // 새로운 데이터를 다시 불러옴
+        settingProductData()
     }
 
     // 이전 화면으로 돌아가는 메서드
@@ -205,11 +229,5 @@ class ShowOneProductDetailFragment : Fragment() {
         }
 
         override fun getItemCount(): Int = imageUris.size
-
-        // 이미지 갱신 메서드
-        fun updateImages(newImageUris: List<Uri>) {
-            imageUris = newImageUris
-            notifyDataSetChanged()  // 데이터 변경 시 갱신
-        }
     }
 }

@@ -7,28 +7,26 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lion.judamie_seller.R
 import com.lion.judamie_seller.SellerActivity
 import com.lion.judamie_seller.databinding.FragmentProductManagementBinding
-import com.lion.judamie_seller.service.SellerService
 import com.lion.judamie_seller.util.ProductType
 import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.viewmodel.ProductManagementViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import com.lion.judamie_seller.viewmodel.rowviewmodel.productViewModel
 
 class ProductManagementFragment() : Fragment() {
 
     lateinit var fragmentProductManagementViewBinding: FragmentProductManagementBinding
     lateinit var sellerActivity: SellerActivity
 
-    private val categories = ProductType.values()
+    private val productViewModel: productViewModel by activityViewModels()
 
+    private val categories = ProductType.values()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,6 +37,8 @@ class ProductManagementFragment() : Fragment() {
         fragmentProductManagementViewBinding.lifecycleOwner = this@ProductManagementFragment
 
         sellerActivity = activity as SellerActivity
+
+        gettingArguments()
 
         settingToolbar()
 
@@ -56,28 +56,37 @@ class ProductManagementFragment() : Fragment() {
         return fragmentProductManagementViewBinding.root
     }
 
+    private fun gettingArguments() {
+        val sellerStoreName = arguments?.getString("sellerStoreName")
+        val sellerDocumentId = arguments?.getString("sellerDocumentId")
+
+        if (sellerStoreName != null && sellerDocumentId != null ) {
+            // ViewModel에 값 저장
+            productViewModel.sellerStoreName = sellerStoreName
+            productViewModel.sellerDocumentId = sellerDocumentId
+        }
+    }
+
     fun settingToolbar(){
         fragmentProductManagementViewBinding.apply {
             toolbar.setOnMenuItemClickListener {
                 when(it.itemId){
                     R.id.menuItemProductAdd -> {
-
+                        val dataBundle = Bundle()
+                        dataBundle.putString("sellerDocumentId", productViewModel.sellerDocumentId)
+                        dataBundle.putString("sellerStoreName", productViewModel.sellerStoreName)
                         // AddProductFragment로 이동
                         sellerActivity.replaceFragment(
                             SellerFragmentType.SELLER_TYPE_ADD_PRODUCT,
                             isAddToBackStack = true,
                             animate = true,
-                            dataBundle = null
+                            dataBundle = dataBundle
                         )
                     }
                 }
                 true
             }
         }
-    }
-
-    fun moveToAddProduct() {
-        sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_ADD_PRODUCT, true, true, null)
     }
 
     // 이전 화면으로 돌아가는 메서드
@@ -94,11 +103,15 @@ class ProductManagementFragment() : Fragment() {
 
         // position번째에서 사용할 Fragment 객체를 생성해 반환하는 메서드
         override fun createFragment(position: Int): Fragment {
-            // 카테고리 정보 전달
-            return ProductCategoryFragment.newInstance(categories[position].str).apply {
-                arguments = Bundle().apply {
-                    putInt("ProductType", categories[position].number) // 전달할 ProductType 추가
-                }
+            val dataBundle = Bundle().apply {
+                putString("categoryName", categories[position].str)
+                putInt("ProductType", categories[position].number)
+                putString("sellerStoreName", productViewModel.sellerStoreName)
+                putString("sellerDocumentId", productViewModel.sellerDocumentId)
+            }
+
+            return ProductCategoryFragment().apply {
+                arguments = dataBundle
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.lion.judamie_seller.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,19 +14,28 @@ import com.lion.judamie_seller.R
 import com.lion.judamie_seller.SellerActivity
 import com.lion.judamie_seller.databinding.FragmentSalesListBinding
 import com.lion.judamie_seller.databinding.RowSalesListBinding
+import com.lion.judamie_seller.model.OrderModel
+import com.lion.judamie_seller.model.OrderPackageModel
+import com.lion.judamie_seller.repository.SellerRepository
+import com.lion.judamie_seller.service.SellerService
 import com.lion.judamie_seller.util.SellerFragmentType
 import com.lion.judamie_seller.viewmodel.SalesListViewModel
+import com.lion.judamie_seller.viewmodel.rowviewmodel.RowOrderCategoryListViewModel
 import com.lion.judamie_seller.viewmodel.rowviewmodel.RowSalesListViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class SalesListFragment() : Fragment() {
 
     lateinit var fragmentSalesListBinding: FragmentSalesListBinding
     lateinit var sellerActivity: SellerActivity
 
-    // ReyclerView 구성을 위한 임시 데이터
-    val tempList = Array(100) {
-        "거래 ${it + 1}"
-    }
+    var orderDataList = mutableListOf<OrderPackageModel>()
+
+    var sellerStoreName: String? = null
+    var recyclerViewList = mutableListOf<OrderPackageModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,8 +47,12 @@ class SalesListFragment() : Fragment() {
 
         sellerActivity = activity as SellerActivity
 
+        sellerStoreName = arguments?.getString("sellerStoreName")
+
         // 리사이클러뷰 구성 메서드 호출
         settingRecyclerView()
+
+        refreshCategoryRecyclerView()
 
         return fragmentSalesListBinding.root
     }
@@ -55,6 +69,20 @@ class SalesListFragment() : Fragment() {
         }
     }
 
+    fun refreshCategoryRecyclerView() {
+        CoroutineScope(Dispatchers.Main).launch {
+            val work1 = async(Dispatchers.IO) {
+                // 선택된 카테고리(`productType`)에 해당하는 데이터만 가져옴
+                SellerService.gettingOrderPackageList()
+            }
+
+            recyclerViewList = work1.await()
+
+            // RecyclerView 업데이트
+            fragmentSalesListBinding.recyclerviewSalesList.adapter?.notifyDataSetChanged()
+        }
+    }
+
     // 메인 RecyclerView의 어뎁터
     inner class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerViewAdapter.MainViewHolder>(){
         inner class MainViewHolder(val rowSalesListBinding: RowSalesListBinding) : RecyclerView.ViewHolder(rowSalesListBinding.root)
@@ -68,19 +96,24 @@ class SalesListFragment() : Fragment() {
 
             // 리사이클러뷰 항목 클릭시 상세 거래 완료 내역 보기 화면으로 이동
             rowTransactionsListBinding.root.setOnClickListener {
-
-                sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_DETAIL_SALES, true, true, null)
+                val dataBundle = Bundle()
+                dataBundle.putString("customerDocumentId", recyclerViewList[mainViewHolder.adapterPosition].orderOwnerId)
+                dataBundle.putString("orderPackageDocumentId", recyclerViewList[mainViewHolder.adapterPosition].orderPackageDocumentId)
+                dataBundle.putString("sellerStoreName",sellerStoreName)
+                sellerActivity.replaceFragment(SellerFragmentType.SELLER_TYPE_DETAIL_SALES, true, true, dataBundle)
             }
-
             return mainViewHolder
         }
 
         override fun getItemCount(): Int {
-            return tempList.size
+            return recyclerViewList.size
         }
 
         override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-            holder.rowSalesListBinding.rowSalesListViewModel?.textViewSalesList?.value = tempList[position]
+            holder.rowSalesListBinding.rowSalesListViewModel?.apply {
+                // 여기서 productName을 텍스트 뷰에 바인딩
+                textViewSalesList?.value = "거래${position+1}"
+            }
         }
     }
 

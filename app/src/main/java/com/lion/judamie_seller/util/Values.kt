@@ -30,8 +30,6 @@ enum class SellerFragmentType(val number:Int, val str:String){
     SELLER_TYPE_DETAIL_ORDER(8, "주문 상세 정보"),
 
     SELLER_TYPE_DETAIL_SALES(9, "매출 상세"),
-
-    SELLER_TYPE_SHOW_ONE_PRODUCT_DETAIL(10, "제품 상세")
 }
 
 enum class ProductState(val number:Int, val str:String){
@@ -56,4 +54,42 @@ enum class ProductType(val number:Int, val str:String){
     PRODUCT_TYPE_BRANDY(10, "브랜디"),
     PRODUCT_TYPE_BEER(11, "맥주"),
     PRODUCT_TYPE_NON_ALCOHOL(12, "논알콜")
+}
+
+// 로그인 결과
+enum class LoginResult(val number:Int, val str:String){
+    LOGIN_RESULT_SUCCESS(1, "로그인 성공"),
+    LOGIN_RESULT_ID_NOT_EXIST(2, "존재하지 않는 아이디"),
+    LOGIN_RESULT_PASSWORD_INCORRECT(3, "잘못된 비밀번호"),
+    LOGIN_RESULT_SIGNOUT_MEMBER(4, "탈퇴한 회원"),
+}
+
+// 사용자 상태 값
+enum class CustomerState(val number:Int, val str:String){
+    // 정상
+    USER_STATE_NORMAL(1, "정상"),
+    // 탈퇴
+    USER_STATE_SIGN_OUT(2, "탈퇴")
+}
+
+// 주문 상태(OrderData)
+enum class OrderState(val num:Int,var str:String) {
+    ORDER_STATE_PAYMENT_COMPLETE(1, "주문 완료"),
+    ORDER_STATE_DELIVERY(2, "배송 완료"),
+    ORDER_STATE_PICKUP_COMPLETED(3, "픽업 완료"),
+    ORDER_STATE_TRANSFER_COMPLETED(4, "입금 처리 완료")
+}
+
+// 주문 Package 상태 (OrderPackage)
+enum class OrderPackageState(val num:Int,var str:String) {
+    ORDER_PACKAGE_STATE_ENABLE(1,"활성화"),
+    ORDER_PACKAGE_STATE_DISABLE(2,"비활성화")
+}
+
+// 픽업지 상태를 나타내는 값
+enum class PickupStateType(var num:Int, var str: String){
+    // 기본
+    PICKUP_STATE_NORMAL(1, "정상"),
+    // 삭제
+    PICKUP_STATE_DELETE(2, "삭제")
 }
